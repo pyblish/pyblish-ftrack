@@ -1,18 +1,13 @@
 import pyblish.api
-import shutil
-import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import pyblish_utils
 
 import ftrack
 
 @pyblish.api.log
 class ValidateFtrackVersion(pyblish.api.Validator):
-    """Publishes current workfile to a _Publish location, next to current working directory"""
+    """Validates whether ftrack version with matching currenFile version exists
+    expects data member 'version' to be in the pyblish context
+    """
 
-    # order = pyblish.api.Conformer.order + 0.1
     families = ['workFile']
     hosts = ['*']
     version = (0, 1, 0)
@@ -20,17 +15,19 @@ class ValidateFtrackVersion(pyblish.api.Validator):
 
     def process_instance(self, instance):
 
+        # TODO: potentialy include version checking in here so we don't rely on it being passed from collector
+
         if instance.context.has_data('version'):
 
             versionNumber = instance.context.data('version')
 
-            taskid = instance.context.data('ft_context')['task']['id']
+            taskid = instance.context.data('ftrackData')['task']['id']
             task = ftrack.Task(taskid)
 
-            shot = ftrack.Shot(id=instance.context.data('ft_context')['shot']['id'])
+            shot = ftrack.Shot(id=instance.context.data('ftrackData')['shot']['id'])
 
-            assetType = instance.context.data('ft_context')['task']['code']
-            assetName = instance.context.data('ft_context')['task']['type']
+            assetType = instance.context.data('ftrackData')['task']['code']
+            assetName = instance.context.data('ftrackData')['task']['type']
 
             asset = shot.createAsset(name=assetName, assetType=assetType, task=task)
 
@@ -41,34 +38,23 @@ class ValidateFtrackVersion(pyblish.api.Validator):
                 if int(v.getVersion()) == int(versionNumber):
                     if not v.get('ispublished'):
                         version = v
-                        instance.context.set_data('ft_versionID', value=version.getId())
+                        instance.context.set_data('ftrackVersionID', value=version.getId())
                         raise pyblish.api.ValidationError('This version already exists, but is not visible in ftrack UI.'
-                                                    ' Repair to replace it. {}'.format(str(version)))
+                                                    ' Repair to delete it. {}'.format(str(version)))
                     else:
                         version = v
-                        instance.context.set_data('ft_versionID', value=version.getId())
-                        raise pyblish.api.ValidationError('This version already exists Repair to replace it. '
+                        instance.context.set_data('ftrackVersionID', value=version.getId())
+                        raise pyblish.api.ValidationError('This version already exists Repair to delete it. '
                                                           '{}'.format(str(version)))
 
-
-            print version
             if not version:
-            #     version = asset.createVersion(comment='', taskid=taskid)
-            #     if int(version.getVersion()) != int(versionNumber):
-            #         version.set('version', value=int(versionNumber))
-            #     instance.context.set_data('create_ft_version', value=True)
-            #     self.log.info('Version will be created in conform step')
-                instance.context.set_data('create_ft_version', value=True)
-            #
-            # version.publish()
+                instance.context.set_data('createFtrackVersion', value=True)
 
         else:
-            self.log.warning('Didn\'t create ftrack version because workfile wasn\'t published')
+            self.log.warning('Can\'t determine file version')
 
     def repair_instance(self, instance):
-        """Saves the script
+        """Removes existing version
         """
-        version = ftrack.AssetVersion(id=instance.context.data('ft_versionID'))
+        version = ftrack.AssetVersion(id=instance.context.data('ftrackVersionID'))
         version.delete()
-        #repair
-        pass

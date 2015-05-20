@@ -1,26 +1,22 @@
-import sys
 import os
 import json
 import base64
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import pyblish_ftrack_utils
 
 import pyblish.api
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import pyblish_utils
-
-import ftrack
-import ft_utils
 
 
 @pyblish.api.log
 class SelectFtrack(pyblish.api.Selector):
-    """Selects current workfile"""
+    """Collects ftrack data from FTRACK_CONNECT_EVENT"""
 
-    order = pyblish.api.Selector.order + 0.5
     hosts = ['*']
     version = (0, 1, 0)
 
-    host = sys.executable.lower()
 
     def process_context(self, context):
 
@@ -32,8 +28,10 @@ class SelectFtrack(pyblish.api.Selector):
 
         taskid = decodedEventData.get('selection')[0]['entityId']
 
-        ft_context = ft_utils.getContext(taskid)
+        ftrackData = pyblish_ftrack_utils.getData(taskid)
+        # print pyblish_ftrack_utils.version_up('testinv_v001.exe')
 
-        context.set_data('ft_context', value=ft_context)
+        context.set_data('ftrackData', value=ftrackData)
 
         self.log.info('Found ftrack data')
+        print context.data('ftrackData')

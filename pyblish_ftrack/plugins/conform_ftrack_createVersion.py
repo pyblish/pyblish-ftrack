@@ -1,10 +1,4 @@
 import pyblish.api
-import shutil
-import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import pyblish_utils
 
 import ftrack
 
@@ -20,39 +14,37 @@ class ConformFtrackCreateVersion(pyblish.api.Conformer):
 
     def process_instance(self, instance):
 
-        if instance.context.data('workfile_published'):
-            if instance.context.data('create_ft_version'):
+        if instance.has_data('publishedFile'):
+            if instance.context.data('createFtrackVersion'):
                 self.log.info('CREATING VERSION')
-                sourcePath = os.path.normpath(instance.data('published_path'))
-
                 versionNumber = instance.context.data('version')
 
-                taskid = instance.context.data('ft_context')['task']['id']
+                taskid = instance.context.data('ftrackData')['task']['id']
                 task = ftrack.Task(taskid)
 
-                shot = ftrack.Shot(id=instance.context.data('ft_context')['shot']['id'])
+                shot = ftrack.Shot(id=instance.context.data('ftrackData')['shot']['id'])
 
-                assetType = instance.context.data('ft_context')['task']['code']
-                assetName = instance.context.data('ft_context')['task']['type']
+                assetType = instance.context.data('ftrackData')['task']['code']
+                assetName = instance.context.data('ftrackData')['task']['type']
 
                 asset = shot.createAsset(name=assetName, assetType=assetType, task=task)
 
                 self.log.info('Using ftrack asset {}'.format(assetName))
 
-                taskid = instance.context.data('ft_context')['task']['id']
+                taskid = instance.context.data('ftrackData')['task']['id']
                 task = ftrack.Task(taskid)
-                shot = ftrack.Shot(id=instance.context.data('ft_context')['shot']['id'])
-                assetType = instance.context.data('ft_context')['task']['code']
-                assetName = instance.context.data('ft_context')['task']['type']
+                shot = ftrack.Shot(id=instance.context.data('ftrackData')['shot']['id'])
+                assetType = instance.context.data('ftrackData')['task']['code']
+                assetName = instance.context.data('ftrackData')['task']['type']
                 asset = shot.createAsset(name=assetName, assetType=assetType, task=task)
 
 
                 version = asset.createVersion(comment='', taskid=taskid)
                 if int(version.getVersion()) != int(versionNumber):
                     version.set('version', value=int(versionNumber))
-                instance.context.set_data('create_ft_version', value=True)
+                instance.context.set_data('createFtrackVersion', value=True)
 
-                instance.context.set_data('ft_versionID', value=version.getId())
+                instance.context.set_data('ftrackVersionID', value=version.getId())
                 print 'version: ' + str(version)
                 version.publish()
 

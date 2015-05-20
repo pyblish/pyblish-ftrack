@@ -1,11 +1,8 @@
 import pyblish.api
 import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import pyblish_utils
 
 import ftrack
+
 
 @pyblish.api.log
 class ConformFtrackUploadPreview(pyblish.api.Conformer):
@@ -19,36 +16,12 @@ class ConformFtrackUploadPreview(pyblish.api.Conformer):
 
     def process_instance(self, instance):
 
-        if instance.has_data('published_path'):
-            sourcePath = os.path.normpath(instance.data('published_path'))
+        if instance.has_data('publishedFile'):
+            sourcePath = os.path.normpath(instance.data('publishedFile'))
             # sourcePath = instance.data('path')
             version = None
-            if instance.context.has_data('ft_versionID'):
-                version = ftrack.AssetVersion(id=instance.context.data('ft_versionID'))
-
-
-            #     (prefix, versionNumber) = pyblish_utils.version_get(sourcePath, 'v')
-
-            #     taskid = instance.context.data('ft_context')['task']['id']
-            #     task = ftrack.Task(taskid)
-            #     shot = ftrack.Shot(id=instance.context.data('ft_context')['shot']['id'])
-            #     assetType = instance.context.data('ft_context')['task']['code']
-            #     assetName = instance.context.data('ft_context')['task']['type']
-            #     asset = shot.createAsset(name=assetName, assetType=assetType, task=task)
-            #     # creating version
-            #     version = None
-            #     for v in asset.getVersions():
-            #         if int(v.getVersion()) == int(versionNumber):
-            #             raise pyblish.api.ValidationError('This version already exists')
-            #             version = v
-            #
-            #     if not version:
-            #         version = asset.createVersion(comment='', taskid=taskid)
-            #         if int(version.getVersion()) != int(versionNumber):
-            #             raise pyblish.api.ValidationError('Version numbers don not match')
-            #             version.set('version', value=int(versionNumber))
-            #
-            # version.publish()
+            if instance.context.has_data('ftrackVersionID'):
+                version = ftrack.AssetVersion(id=instance.context.data('ftrackVersionID'))
 
                 componentName = 'preview'
 
