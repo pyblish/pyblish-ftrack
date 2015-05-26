@@ -8,8 +8,13 @@ import ft_pathUtils
 
 
 @pyblish.api.log
-class ConformFtrackWorkfile(pyblish.api.Conformer):
-    """Copies current workfile to it's final location"""
+class FtrackPublishWorkfile(pyblish.api.Conformer):
+    """Copies current workfile to it's final location
+
+    Expected data members:
+    'ftrackData' - Necessary frack information gathered by select_ftrack
+    'version' - version of publish
+    """
 
     families = ['workFile']
     hosts = ['*']
@@ -17,8 +22,7 @@ class ConformFtrackWorkfile(pyblish.api.Conformer):
     optional = True
 
     def process_instance(self, instance):
-        sourcePath = os.path.normpath(instance.data('path'))
-
+        sourcePath = os.path.normpath(instance.context.data('currentFile'))
 
         ######################################################################################
         # TODO: figure out how to make path matching customisable

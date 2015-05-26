@@ -3,13 +3,17 @@ import os
 
 import ftrack
 
-
 @pyblish.api.log
-class ConformFtrackUploadPreview(pyblish.api.Conformer):
-    """Publishes current workfile to a _Publish location, next to current working directory"""
+class FtrackUploadScene(pyblish.api.Conformer):
+    """Creates scene component within supplied version.
+
+    Expected data members:
+    'publishedFile' - path that will be saved as a component
+    'ftrackVersionID' - ID of a version where component should be created
+    """
 
     order = pyblish.api.Conformer.order + 0.11
-    families = ['preview']
+    families = ['workFile']
     hosts = ['*']
     version = (0, 1, 0)
     optional = True
@@ -18,12 +22,11 @@ class ConformFtrackUploadPreview(pyblish.api.Conformer):
 
         if instance.has_data('publishedFile'):
             sourcePath = os.path.normpath(instance.data('publishedFile'))
-            # sourcePath = instance.data('path')
-            version = None
+
             if instance.context.has_data('ftrackVersionID'):
                 version = ftrack.AssetVersion(id=instance.context.data('ftrackVersionID'))
 
-                componentName = 'preview'
+                componentName = 'scene'
 
                 try:
                     component = version.getComponent(name=componentName)
@@ -32,11 +35,10 @@ class ConformFtrackUploadPreview(pyblish.api.Conformer):
                 except:
                     self.log.info('Creating component with name "%s"' % componentName)
 
-                version.createComponent(name='preview', path=sourcePath)
-                #make reviewable
-                ftrack.Review.makeReviewable(version, sourcePath)
+                version.createComponent(name=componentName, path=sourcePath)
+                self.log.info('Component {} created'.format(componentName))
             else:
                 self.log.info('No versionID found in context')
-
+                # instance.context.set_data('ftrackVersionID', value=version.getId())
         else:
-            self.log.warning('No published flipbook found!')
+            self.log.warning('Didn\'t create ftrack version because workfile wasn\'t published')

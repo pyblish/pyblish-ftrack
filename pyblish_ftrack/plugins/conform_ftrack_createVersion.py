@@ -4,7 +4,14 @@ import ftrack
 
 @pyblish.api.log
 class ConformFtrackCreateVersion(pyblish.api.Conformer):
-    """Publishes current workfile to a _Publish location, next to current working directory"""
+    """Creates ftrack version for currently running publish.
+
+    Expected data members:
+    'ftrackData' - Necessary frack information gathered by select_ftrack
+    'publishedFile' - path that will be saved as a component
+    'createFtrackVersion' - boolean variable set by validate_ftrack_version
+    'version' - version of publish
+    """
 
     order = pyblish.api.Conformer.order + 0.1
     families = ['workFile']

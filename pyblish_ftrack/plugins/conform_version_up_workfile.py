@@ -17,7 +17,11 @@ import ft_pathUtils
 
 @pyblish.api.log
 class VersionUpWorkfile(pyblish.api.Conformer):
-    """Versions up current workfile"""
+    """Versions up current workfile
+
+    Expected data members:
+    'ftrackData' - Necessary frack information gathered by select_ftrack
+    """
 
     families = ['workFile']
     hosts = ['*']
@@ -27,7 +31,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
 
     def process_instance(self, instance):
 
-        if instance.context.has_data('version'):
+        if instance.has_data('version'):
 
             sourcePath = os.path.normpath(instance.context.data('currentFile'))
 

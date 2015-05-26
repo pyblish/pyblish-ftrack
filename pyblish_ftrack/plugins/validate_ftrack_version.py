@@ -5,7 +5,10 @@ import ftrack
 @pyblish.api.log
 class ValidateFtrackVersion(pyblish.api.Validator):
     """Validates whether ftrack version with matching currenFile version exists
-    expects data member 'version' to be in the pyblish context
+
+    expected data members:
+    'ftrackData' - Necessary frack information gathered by select_ftrack
+    'version' - version of publish
     """
 
     families = ['workFile']

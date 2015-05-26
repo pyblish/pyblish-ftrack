@@ -3,12 +3,18 @@ import os
 
 import ftrack
 
+
 @pyblish.api.log
-class ConformFtrackUpload(pyblish.api.Conformer):
-    """Creates scene component with in supplied version"""
+class FtrackUploadPreview(pyblish.api.Conformer):
+    """Creates Preview component within supplied version, also makes this preview reviewable.
+
+    Expected data members:
+    'publishedFile' - path that will be saved as a component
+    'ftrackVersionID' - ID of a version where component should be created
+    """
 
     order = pyblish.api.Conformer.order + 0.11
-    families = ['workFile']
+    families = ['preview']
     hosts = ['*']
     version = (0, 1, 0)
     optional = True
@@ -17,12 +23,11 @@ class ConformFtrackUpload(pyblish.api.Conformer):
 
         if instance.has_data('publishedFile'):
             sourcePath = os.path.normpath(instance.data('publishedFile'))
+            version = None
 
             if instance.context.has_data('ftrackVersionID'):
                 version = ftrack.AssetVersion(id=instance.context.data('ftrackVersionID'))
-
-                componentName = 'scene'
-
+                componentName = 'preview'
                 try:
                     component = version.getComponent(name=componentName)
                     component.delete()
@@ -30,10 +35,11 @@ class ConformFtrackUpload(pyblish.api.Conformer):
                 except:
                     self.log.info('Creating component with name "%s"' % componentName)
 
-                version.createComponent(name=componentName, path=sourcePath)
-                self.log.info('Component {} created'.format(componentName))
+                version.createComponent(name='preview', path=sourcePath)
+                # make reviewable
+                ftrack.Review.makeReviewable(version, sourcePath)
             else:
                 self.log.info('No versionID found in context')
-                # instance.context.set_data('ftrackVersionID', value=version.getId())
+
         else:
-            self.log.warning('Didn\'t create ftrack version because workfile wasn\'t published')
+            self.log.warning('No published flipbook found!')

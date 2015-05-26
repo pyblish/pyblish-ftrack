@@ -9,7 +9,13 @@ import ft_pathUtils
 
 @pyblish.api.log
 class ConformFtrackFlipbook(pyblish.api.Conformer):
-    """Copies Preview movie to it's final location"""
+    """Copies Preview movie to it's final location
+
+     Expected data members:
+    'ftrackData' - Necessary frack information gathered by select_ftrack
+    'outputPath' - Output path of current instance
+    'version' - version of publish
+    """
 
     families = ['preview']
     hosts = ['*']
@@ -22,7 +28,6 @@ class ConformFtrackFlipbook(pyblish.api.Conformer):
             sourcePath = os.path.normpath(instance.data('outputPath'))
             version = instance.context.data('version')
             version = 'v' + version
-            print 'HELLEOE: ' + version
 
             ######################################################################################
             # TODO: figure out how to make path matching customisable
@@ -52,6 +57,7 @@ class ConformFtrackFlipbook(pyblish.api.Conformer):
 
             publishFile = ft_pathUtils.getPaths(taskid, templates, version)
             publishFile = os.path.normpath(publishFile[templates[0]])
+
             ######################################################################################
 
             self.log.info('Copying preview to location: {}'.format(publishFile))
