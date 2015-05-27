@@ -21,7 +21,7 @@ task_codes = {
 
 
 # Collect all ftrack data and store it in a dictionary
-def getContext(taskid):
+def getData(taskid):
     try:
         task = ftrack.Task(id=taskid)
     except:

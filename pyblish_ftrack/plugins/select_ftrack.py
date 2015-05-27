@@ -30,14 +30,18 @@ class CollectFtrack(pyblish.api.Selector):
         ftrackData = pyblish_ftrack_utils.getData(taskid)
 
         context.set_data('ftrackData', value=ftrackData)
+        print ftrackData
 
-        try:
-            (prefix, version) = pyblish_utils.version_get(filename, 'v')
-        except:
-            self.log.warning('Cannot publish workfile which is not versioned.')
-            return
 
-        context.set_data('version', value=version)
-        context.set_data('vprefix', value=prefix)
+        if not context.has_data('version'):
+            directory, filename = os.path.split(context.data('currentFile'))
+            try:
+                (prefix, version) = pyblish_ftrack_utils.version_get(filename, 'v')
+            except:
+                self.log.warning('Cannot find version string in filename.')
+                return
+
+            context.set_data('version', value=version)
+            context.set_data('vprefix', value=prefix)
 
         self.log.info('Found ftrack data')
