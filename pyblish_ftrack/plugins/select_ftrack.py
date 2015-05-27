@@ -11,7 +11,7 @@ import pyblish.api
 
 @pyblish.api.log
 class CollectFtrack(pyblish.api.Selector):
-    """ Collects ftrack data from FTRACK_CONNECT_EVENT"""
+    """Collects ftrack data from FTRACK_CONNECT_EVENT"""
 
     order = pyblish.api.Selector.order + 0.1
     hosts = ['*']
@@ -59,7 +59,9 @@ class CollectFtrack(pyblish.api.Selector):
                                }
 
         # Get version number
-        if not context.has_data('version'):
+        if context.has_data('version'):
+            ftrackData['version'] = {'number': int(context.data('version'))}
+        else:
             directory, filename = os.path.split(context.data('currentFile'))
             try:
                 prefix, version = pyblish_ftrack_utils.version_get(filename, 'v')
@@ -72,9 +74,6 @@ class CollectFtrack(pyblish.api.Selector):
             context.set_data('version', value=version)
             context.set_data('vprefix', value=prefix)
             self.log.info('Publish Version: {}'.format(version))
-
-        else:
-            ftrackData['version'] = {'number': int(context.data('version'))}
 
         # set ftrack data
         context.set_data('ftrackData', value=ftrackData)
