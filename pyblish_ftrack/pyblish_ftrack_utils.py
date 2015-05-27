@@ -1,6 +1,10 @@
 import re
 import ftrack
 
+#   ====================
+#   Task codes dictionary. This is needed to prevent file names and folders with full task type names.
+#   Hopefully a temporary code until this is implemented in ftrack webUI. Change the code to your liking.
+
 task_codes = {
     'Animation': 'anim',
     'Layout': 'layout',
@@ -8,8 +12,54 @@ task_codes = {
     'Compositing': 'comp',
     'Motion Graphics': 'mograph',
     'Lighting': 'light',
-}
+    'Modelling': 'geo',
+    'Rigging': 'rig',
+    'Art': 'art',
 
+}
+#   ====================
+
+
+# Collect all ftrack data and store it in a dictionary
+def getContext(taskid):
+    try:
+        task = ftrack.Task(id=taskid)
+    except:
+        task = None
+
+    parents = task.getParents()
+    project = ftrack.Project(task.get('showid'))
+    taskType = task.getType().getName()
+
+    ctx = {
+        'project': {
+                'name': project.get('fullname'),
+                'code': project.get('name'),
+                'id': task.get('showid')
+        },
+        'task': {
+                'type': taskType,
+                'name': task.getName(),
+                'id': task.getId(),
+                'code': task_codes.get(taskType, None)
+        }
+    }
+
+    for parent in parents:
+        tempdic = {}
+        if parent.get('entityType') == 'task' and parent.getObjectType():
+            print parent
+            objectType = parent.getObjectType()
+            tempdic['name'] = parent.getName()
+            tempdic['description'] = parent.getDescription()
+            tempdic['id'] = parent.getId()
+            if objectType == 'Asset Build':
+                tempdic['type'] = parent.getType().get('name')
+                objectType = 'asset'
+
+            ctx[objectType.lower()] = tempdic
+
+    return ctx
 
 def version_up(string):
     try:
@@ -20,97 +70,6 @@ def version_up(string):
         raise ValueError, 'Unable to version up File'
 
     return file
-
-
-def getData(taskid):
-    try:
-        task = ftrack.Task(id=taskid)
-    except:
-        task = None
-
-    parents = task.getParents()
-    project = ftrack.Project(task.get('showid'))
-    stepName = task.getType().getName()
-    directParent = parents[0]
-
-    episodeDesc = episodeName = sequenceName = sequenceDesc = shotName = assetName = assetCategory = None
-
-    for parent in parents:
-
-        if parent.get('entityType') == 'task':
-            objectType = parent.getObjectType()
-            if objectType == 'Shot':
-                shotName = parent.getName()
-                shotDesc = parent.getDescription()
-                shot_id = parent.getId()
-            elif objectType == 'Sequence':
-                sequenceName = parent.getName()
-                sequenceDesc = parent.getDescription()
-                sequence_id = parent.getId()
-            elif objectType == 'Episode':
-                episodeName = parent.getName()
-                episodeDesc = parent.getDescription()
-                episode_id = parent.getId()
-            elif objectType == 'Asset Build':
-                assetName = parent.getName()
-                assetCategory = parent.getType().get('name')
-                asset_id = parent.getId()
-
-
-    if directParent.getObjectType() in ['Shot', 'Sequence', 'Episode']:
-        ctx = {
-            'project': {
-                # 'scode': project.get('scode'),
-                'name': project.get('fullname'),
-                'code': project.get('name'),
-                'id': task.get('showid')
-            },
-            'shot': {
-                'name': shotName,
-                'description': shotDesc,
-                'id': shot_id
-            },
-            'sequence': {
-                'name': sequenceName,
-                'description': sequenceDesc,
-                'id': sequence_id
-            },
-            'task': {
-                'type': stepName,
-                'name': task.getName(),
-                'id': task.getId(),
-                'code': task_codes.get(stepName, None)
-            }
-        }
-        if episodeName:
-            ctx['episode'] = {
-                'name': episodeName,
-                'description': episodeDesc,
-                'id': episode_id
-            }
-    else :
-        ctx = {
-            'project': {
-                # 'scode': project.get('scode'),
-                'name': project.get('fullname'),
-                'code': project.get('name'),
-                'id': task.get('showid')
-            },
-            'asset': {
-                'name': assetName,
-                'type': assetCategory,
-                'id': asset_id
-            },
-            'task': {
-                'type': stepName,
-                'name': task.getName(),
-                'id': task.getId(),
-                'code': task_codes.get(stepName, None)
-            }
-        }
-
-    return ctx
-
 
 def version_get(string, prefix, suffix = None):
     """Extract version information from filenames.  Code from Foundry's nukescripts.version_get()"""
