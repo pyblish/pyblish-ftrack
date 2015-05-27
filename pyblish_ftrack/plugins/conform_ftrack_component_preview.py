@@ -1,8 +1,6 @@
 import pyblish.api
 import os
-
 import ftrack
-
 
 @pyblish.api.log
 class FtrackUploadPreview(pyblish.api.Conformer):

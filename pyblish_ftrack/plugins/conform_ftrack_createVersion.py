@@ -1,5 +1,4 @@
 import pyblish.api
-
 import ftrack
 
 @pyblish.api.log
@@ -7,7 +6,7 @@ class ConformFtrackCreateVersion(pyblish.api.Conformer):
     """Creates ftrack version for currently running publish.
 
     Expected data members:
-    'ftrackData' - Necessary frack information gathered by select_ftrack
+    'ftrackData' - Necessary ftrack information gathered by select_ftrack
     'publishedFile' - path that will be saved as a component
     'createFtrackVersion' - boolean variable set by validate_ftrack_version
     'version' - version of publish

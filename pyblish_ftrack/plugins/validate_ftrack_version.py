@@ -4,10 +4,10 @@ import ftrack
 
 @pyblish.api.log
 class ValidateFtrackVersion(pyblish.api.Validator):
-    """Validates whether ftrack version with matching currenFile version exists
+    """Validates whether ftrack version with matching version number exists
 
     expected data members:
-    'ftrackData' - Necessary frack information gathered by select_ftrack
+    'ftrackData' - Necessary ftrack information gathered by select_ftrack
     'version' - version of publish
     """
 
@@ -18,7 +18,7 @@ class ValidateFtrackVersion(pyblish.api.Validator):
 
     def process_instance(self, instance):
 
-        # TODO: potentialy include version checking in here so we don't rely on it being passed from collector
+        # TODO: potentially include version checking in here so we don't rely on it being passed from collector
 
         if instance.context.has_data('version'):
 
@@ -43,7 +43,7 @@ class ValidateFtrackVersion(pyblish.api.Validator):
                         version = v
                         instance.context.set_data('ftrackVersionID', value=version.getId())
                         raise pyblish.api.ValidationError('This version already exists, but is not visible in ftrack UI.'
-                                                    ' Repair to delete it. {}'.format(str(version)))
+                                                    'Repair to delete it. {}'.format(str(version)))
                     else:
                         version = v
                         instance.context.set_data('ftrackVersionID', value=version.getId())

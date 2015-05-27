@@ -1,6 +1,5 @@
 import pyblish.api
 import os
-
 import ftrack
 
 @pyblish.api.log
@@ -39,6 +38,5 @@ class FtrackUploadScene(pyblish.api.Conformer):
                 self.log.info('Component {} created'.format(componentName))
             else:
                 self.log.info('No versionID found in context')
-                # instance.context.set_data('ftrackVersionID', value=version.getId())
         else:
             self.log.warning('Didn\'t create ftrack version because workfile wasn\'t published')
