@@ -44,15 +44,11 @@ class FtrackCreateVersion(pyblish.api.Conformer):
                 assetName = instance.context.data('ftrackData')['task']['type']
                 asset = shot.createAsset(name=assetName, assetType=assetType, task=task)
 
-
                 version = asset.createVersion(comment='', taskid=taskid)
                 if int(version.getVersion()) != int(versionNumber):
                     version.set('version', value=int(versionNumber))
                 instance.context.set_data('createFtrackVersion', value=True)
-
                 instance.context.set_data('ftrackVersionID', value=version.getId())
-                print 'version: ' + str(version)
                 version.publish()
-
         else:
             self.log.warning('Didn\'t create ftrack version because workfile wasn\'t published')

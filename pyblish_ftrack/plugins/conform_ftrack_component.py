@@ -22,7 +22,8 @@ class FtrackUploadComponent(pyblish.api.Conformer):
 
     def process_instance(self, instance):
 
-        if instance.has_data('ftrackComponent'):
+        if instance.has_data('ftrackComponent') and instance.has_data('ftrackComponentName'):
+
             sourcePath = os.path.normpath(instance.data('ftrackComponent'))
 
             if instance.context.has_data('ftrackVersionID'):

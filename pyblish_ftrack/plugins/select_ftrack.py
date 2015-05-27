@@ -8,14 +8,12 @@ import pyblish_ftrack_utils
 
 import pyblish.api
 
-
 @pyblish.api.log
 class CollectFtrack(pyblish.api.Selector):
     """Collects ftrack data from FTRACK_CONNECT_EVENT"""
 
     hosts = ['*']
     version = (0, 1, 0)
-
 
     def process_context(self, context):
 
@@ -26,12 +24,8 @@ class CollectFtrack(pyblish.api.Selector):
         )
 
         taskid = decodedEventData.get('selection')[0]['entityId']
-
         ftrackData = pyblish_ftrack_utils.getData(taskid)
-
         context.set_data('ftrackData', value=ftrackData)
-        print ftrackData
-
 
         if not context.has_data('version'):
             directory, filename = os.path.split(context.data('currentFile'))
