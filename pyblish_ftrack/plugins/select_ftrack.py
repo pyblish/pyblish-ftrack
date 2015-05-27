@@ -10,7 +10,7 @@ import pyblish.api
 
 
 @pyblish.api.log
-class SelectFtrack(pyblish.api.Selector):
+class CollectFtrack(pyblish.api.Selector):
     """Collects ftrack data from FTRACK_CONNECT_EVENT"""
 
     hosts = ['*']

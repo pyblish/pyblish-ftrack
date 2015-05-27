@@ -2,7 +2,7 @@ import pyblish.api
 import ftrack
 
 @pyblish.api.log
-class ConformFtrackCreateVersion(pyblish.api.Conformer):
+class FtrackCreateVersion(pyblish.api.Conformer):
     """Creates ftrack version for currently running publish.
 
     Expected data members:
