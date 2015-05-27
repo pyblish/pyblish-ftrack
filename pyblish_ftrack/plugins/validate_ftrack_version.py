@@ -29,13 +29,11 @@ class ValidateFtrackVersion(pyblish.api.Validator):
                     if not v.get('ispublished'):
                         version = v
                         instance.context.set_data('ftrackVersionID', value=version.getId())
-                        raise pyblish.api.ValidationError('This version already exists, but is not visible in ftrack UI.'
-                                                            '{}'.format(str(version)))
+                        raise pyblish.api.ValidationError('This version already exists, but is not visible in the UI.')
                     else:
                         version = v
                         instance.context.set_data('ftrackVersionID', value=version.getId())
-                        self.log.warning(('This version already exists {}. '
-                                          'Will check for existence of separate components'.format(str(version))))
+                        self.log.warning('This version already exists. Will check for existence of  components')
 
             if not version:
                 instance.context.set_data('createFtrackVersion', value=True)
