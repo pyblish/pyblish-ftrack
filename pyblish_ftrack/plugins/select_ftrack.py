@@ -57,7 +57,6 @@ class CollectFtrack(pyblish.api.Selector):
         ftrackData['asset'] = {'id': asset.getId(),
                                'name': asset.getName()
                                }
-
         # Get version number
         if context.has_data('version'):
             ftrackData['version'] = {'number': int(context.data('version'))}
@@ -65,12 +64,12 @@ class CollectFtrack(pyblish.api.Selector):
             directory, filename = os.path.split(context.data('currentFile'))
             try:
                 prefix, version = pyblish_ftrack_utils.version_get(filename, 'v')
+                ftrackData['version'] = {'number': int(version)}
             except:
                 self.log.warning('Cannot find version string in filename.')
                 return
 
-            ftrackData['version']['number'] = int(version)
-            
+
         self.log.info('Publish Version: {}'.format(ftrackData['version']['number']))
 
         # set ftrack data
