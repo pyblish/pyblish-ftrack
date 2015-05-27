@@ -31,7 +31,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
 
     def process_instance(self, instance):
 
-        if instance.has_data('version'):
+        if instance.context.has_data('version'):
 
             sourcePath = os.path.normpath(instance.context.data('currentFile'))
 
