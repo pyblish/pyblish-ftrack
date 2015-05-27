@@ -48,7 +48,6 @@ def getContext(taskid):
     for parent in parents:
         tempdic = {}
         if parent.get('entityType') == 'task' and parent.getObjectType():
-            print parent
             objectType = parent.getObjectType()
             tempdic['name'] = parent.getName()
             tempdic['description'] = parent.getDescription()
@@ -56,10 +55,10 @@ def getContext(taskid):
             if objectType == 'Asset Build':
                 tempdic['type'] = parent.getType().get('name')
                 objectType = 'asset'
-
             ctx[objectType.lower()] = tempdic
 
     return ctx
+
 
 def version_up(string):
     try:
