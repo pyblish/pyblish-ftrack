@@ -54,7 +54,7 @@ def getData(taskid):
             tempdic['id'] = parent.getId()
             if objectType == 'Asset Build':
                 tempdic['type'] = parent.getType().get('name')
-                objectType = 'asset'
+                objectType = 'asset_build'
             ctx[objectType.lower()] = tempdic
 
     return ctx
