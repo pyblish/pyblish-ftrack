@@ -70,10 +70,8 @@ class CollectFtrack(pyblish.api.Selector):
                 return
 
             ftrackData['version']['number'] = int(version)
-
-            context.set_data('version', value=version)
-            context.set_data('vprefix', value=prefix)
-            self.log.info('Publish Version: {}'.format(version))
+            
+        self.log.info('Publish Version: {}'.format(ftrackData['version']['number']))
 
         # set ftrack data
         context.set_data('ftrackData', value=ftrackData)
