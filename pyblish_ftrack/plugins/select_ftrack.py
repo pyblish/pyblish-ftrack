@@ -42,7 +42,7 @@ class CollectFtrack(pyblish.api.Selector):
         if assets:
             for a in assets:
                 if a.getName() == assetName:
-                    self.log.info('Found existing asset with default name {}'.format(a.getName()))
+                    self.log.info('Found existing asset with name {}'.format(a.getName()))
                     asset = a
                     break
                 else:
