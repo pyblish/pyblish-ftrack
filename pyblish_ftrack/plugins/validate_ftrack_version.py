@@ -4,37 +4,24 @@ import ftrack
 
 @pyblish.api.log
 class ValidateFtrackVersion(pyblish.api.Validator):
-    """Validates whether ftrack version with matching version number exists
+    """ Validates whether ftrack version with matching version number exists
 
-    expected data members:
-    'ftrackData' - Necessary ftrack information gathered by select_ftrack
-    'version' - version of publish
+        Arguments:
+            ftrackData (dictionary): Necessary ftrack information gathered by select_ftrack
     """
 
-    families = ['workFile']
+    families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
     optional = True
 
     def process_instance(self, instance):
 
-        # TODO: potentially include version checking in here so we don't rely on it being passed from collector
+        if instance.context.data('ftrackData')['version']['number']:
 
-        if instance.context.has_data('version'):
+            versionNumber = instance.context.data('ftrackData')['version']['number']
 
-            versionNumber = instance.context.data('version')
-
-            taskid = instance.context.data('ftrackData')['task']['id']
-            task = ftrack.Task(taskid)
-
-            shot = ftrack.Shot(id=instance.context.data('ftrackData')['shot']['id'])
-
-            assetType = instance.context.data('ftrackData')['task']['code']
-            assetName = instance.context.data('ftrackData')['task']['type']
-
-            asset = shot.createAsset(name=assetName, assetType=assetType, task=task)
-
-            self.log.info('Using ftrack asset {}'.format(assetName))
+            asset = ftrack.Asset(id=instance.context.data('ftrackData')['asset']['id'])
 
             version = None
             for v in asset.getVersions():
@@ -42,22 +29,15 @@ class ValidateFtrackVersion(pyblish.api.Validator):
                     if not v.get('ispublished'):
                         version = v
                         instance.context.set_data('ftrackVersionID', value=version.getId())
-                        raise pyblish.api.ValidationError('This version already exists, but is not visible in ftrack UI.'
-                                                    'Repair to delete it. {}'.format(str(version)))
+                        raise pyblish.api.ValidationError('This version already exists, but is not visible in the UI.')
                     else:
                         version = v
                         instance.context.set_data('ftrackVersionID', value=version.getId())
-                        raise pyblish.api.ValidationError('This version already exists Repair to delete it. '
-                                                          '{}'.format(str(version)))
+                        self.log.warning('This version already exists. Will check for existence of  components')
 
             if not version:
                 instance.context.set_data('createFtrackVersion', value=True)
+                self.log.info('Setting createFtrackVersion arguments')
 
         else:
-            self.log.warning('Can\'t determine file version')
-
-    def repair_instance(self, instance):
-        """Removes existing version
-        """
-        version = ftrack.AssetVersion(id=instance.context.data('ftrackVersionID'))
-        version.delete()
+            self.log.warning('Missing version in instance data')

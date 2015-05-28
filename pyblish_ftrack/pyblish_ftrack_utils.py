@@ -21,7 +21,7 @@ task_codes = {
 
 
 # Collect all ftrack data and store it in a dictionary
-def getContext(taskid):
+def getData(taskid):
     try:
         task = ftrack.Task(id=taskid)
     except:
@@ -54,7 +54,7 @@ def getContext(taskid):
             tempdic['id'] = parent.getId()
             if objectType == 'Asset Build':
                 tempdic['type'] = parent.getType().get('name')
-                objectType = 'asset'
+                objectType = 'asset_build'
             ctx[objectType.lower()] = tempdic
 
     return ctx
