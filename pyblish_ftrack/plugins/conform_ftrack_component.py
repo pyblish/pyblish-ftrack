@@ -27,9 +27,19 @@ class FtrackUploadComponent(pyblish.api.Conformer):
             if instance.context.has_data('ftrackVersionID'):
                 version = ftrack.AssetVersion(id=instance.context.data('ftrackVersionID'))
                 componentName = instance.data('ftrackComponentName')
-                self.log.info('creating component {}'.format(componentName))
 
-                version.createComponent(name=componentName, path=sourcePath)
+                createComponent = True
+                for c in version.getComponents():
+                    if c.getName() == componentName:
+                        if c.getFile() == sourcePath:
+                            createComponent = False
+
+                if createComponent:
+                    self.log.info('creating component {}'.format(componentName))
+                    version.createComponent(name=componentName, path=sourcePath)
+                else:
+                    self.log.info('Component already exists.')
+
                 # make reviewable
                 if instance.has_data('ftrackReviewable'):
                     ftrack.Review.makeReviewable(version, sourcePath)
