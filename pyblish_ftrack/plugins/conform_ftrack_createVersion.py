@@ -24,9 +24,9 @@ class FtrackCreateVersion(pyblish.api.Conformer):
                 self.log.info('CREATING VERSION')
                 versionNumber = instance.context.data('ftrackData')['version']['number']
 
-                taskid = instance.context.data('ftrackData')['task']['id']
+                taskid = instance.context.data('ftrackData')['Task']['id']
 
-                asset = ftrack.Asset(id=instance.context.data('ftrackData')['asset']['id'])
+                asset = ftrack.Asset(id=instance.context.data('ftrackData')['Asset']['id'])
                 self.log.info('Using ftrack asset {}'.format(asset.getName()))
 
                 version = asset.createVersion(comment='', taskid=taskid)

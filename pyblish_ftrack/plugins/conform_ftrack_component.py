@@ -47,4 +47,4 @@ class FtrackUploadComponent(pyblish.api.Conformer):
                 self.log.info('No versionID found in context')
 
         else:
-            self.log.warning('No published flipbook found!')
+            self.log.warning('No published component found!')

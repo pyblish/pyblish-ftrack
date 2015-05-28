@@ -24,20 +24,21 @@ task_codes = {
 def getData(taskid):
     try:
         task = ftrack.Task(id=taskid)
-    except:
+    except ValueError:
         task = None
 
     parents = task.getParents()
     project = ftrack.Project(task.get('showid'))
     taskType = task.getType().getName()
+    entityType = task.getObjectType()
 
     ctx = {
-        'project': {
+        'Project': {
                 'name': project.get('fullname'),
                 'code': project.get('name'),
                 'id': task.get('showid')
         },
-        'task': {
+        entityType: {
                 'type': taskType,
                 'name': task.getName(),
                 'id': task.getId(),
@@ -48,14 +49,16 @@ def getData(taskid):
     for parent in parents:
         tempdic = {}
         if parent.get('entityType') == 'task' and parent.getObjectType():
+            print parent
             objectType = parent.getObjectType()
             tempdic['name'] = parent.getName()
             tempdic['description'] = parent.getDescription()
             tempdic['id'] = parent.getId()
             if objectType == 'Asset Build':
                 tempdic['type'] = parent.getType().get('name')
-                objectType = 'asset_build'
-            ctx[objectType.lower()] = tempdic
+                objectType = objectType.replace(' ', '_')
+
+            ctx[objectType] = tempdic
 
     return ctx
 
