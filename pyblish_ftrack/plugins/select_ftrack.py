@@ -9,6 +9,7 @@ import pyblish_ftrack_utils
 
 import pyblish.api
 
+
 @pyblish.api.log
 class CollectFtrack(pyblish.api.Selector):
     """Collects ftrack data from FTRACK_CONNECT_EVENT"""
@@ -28,14 +29,13 @@ class CollectFtrack(pyblish.api.Selector):
         taskid = decodedEventData.get('selection')[0]['entityId']
         ftrackData = pyblish_ftrack_utils.getData(taskid)
 
-
         # Get ftrack Asset
         task = ftrack.Task(taskid)
 
-        shot = ftrack.Shot(id=ftrackData['shot']['id'])
+        shot = ftrack.Shot(id=ftrackData['Shot']['id'])
 
-        assetType = ftrackData['task']['code']
-        assetName = ftrackData['task']['type']
+        assetType = ftrackData['Task']['code']
+        assetName = ftrackData['Task']['type']
 
         assets = task.getAssets(assetTypes=[assetType])
 
@@ -54,7 +54,7 @@ class CollectFtrack(pyblish.api.Selector):
 
         self.log.info('Using ftrack asset {}'.format(asset.getName()))
 
-        ftrackData['asset'] = {'id': asset.getId(),
+        ftrackData['Asset'] = {'id': asset.getId(),
                                'name': asset.getName()
                                }
         # Get version number
@@ -65,10 +65,9 @@ class CollectFtrack(pyblish.api.Selector):
             try:
                 prefix, version = pyblish_ftrack_utils.version_get(filename, 'v')
                 ftrackData['version'] = {'number': int(version)}
-            except:
+            except ValueError:
                 self.log.warning('Cannot find version string in filename.')
-                return
-
+                return None
 
         self.log.info('Publish Version: {}'.format(ftrackData['version']['number']))
 

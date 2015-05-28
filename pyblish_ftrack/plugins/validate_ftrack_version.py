@@ -21,7 +21,7 @@ class ValidateFtrackVersion(pyblish.api.Validator):
 
             versionNumber = instance.context.data('ftrackData')['version']['number']
 
-            asset = ftrack.Asset(id=instance.context.data('ftrackData')['asset']['id'])
+            asset = ftrack.Asset(id=instance.context.data('ftrackData')['Asset']['id'])
 
             version = None
             for v in asset.getVersions():
