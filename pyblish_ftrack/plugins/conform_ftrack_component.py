@@ -9,7 +9,7 @@ class FtrackUploadComponent(pyblish.api.Conformer):
         Arguments:
             ftrackComponent (string): path that will be saved as a component
             ftrackComponentName (string): component name
-            ftrackVersionID (string): ID of a version where component should be created
+            ftrackData (dictionary): Necessary ftrack information gathered by select_ftrack
             ftrackReviewable (string, optional): will make
     """
 

@@ -17,13 +17,14 @@ class ValidateFtrackVersion(pyblish.api.Validator):
 
     def process_instance(self, instance):
 
-        assert instance.context.has_data('version'), 'Missing version in context.'
-        assert instance.context.has_data('ftrackData'), 'Missing ftrackData in context.'
+        if instance.context.has_data('ftrackData'):
+            assert instance.context.has_data('version'), 'Missing version in context.'
+            ftrack_data = instance.context.data('ftrackData')
 
-        ftrack_data = instance.context.data('ftrackData')
+            if 'AssetVersion' in ftrack_data:
+                asset_version = ftrack.AssetVersion(id=ftrack_data['AssetVersion']['id'])
+                self.log.debug('Validating AssetVersion with ID {}'.format(ftrack_data['AssetVersion']['id']))
 
-        if 'AssetVersion' in ftrack_data:
-            asset_version = ftrack.AssetVersion(id=ftrack_data['AssetVersion']['id'])
-            self.log.debug('Validating AssetVersion with ID {}'.format(ftrack_data['AssetVersion']['id']))
-
-            assert asset_version.get('ispublished'), "AssetVersion exists but is not visible in UI"
+                assert asset_version.get('ispublished'), "AssetVersion exists but is not visible in UI"
+        else:
+            self.log.info('No ftrackData present. Skipping this instance')

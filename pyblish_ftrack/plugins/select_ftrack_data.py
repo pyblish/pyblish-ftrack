@@ -12,7 +12,10 @@ import pyblish.api
 
 @pyblish.api.log
 class CollectFtrackData(pyblish.api.Selector):
-    """Collects ftrack data from FTRACK_CONNECT_EVENT"""
+    """Collects ftrack data from FTRACK_CONNECT_EVENT
+        Arguments:
+            version (int): version number of the publish
+    """
 
     order = pyblish.api.Selector.order + 0.11
     hosts = ['*']

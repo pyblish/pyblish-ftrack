@@ -12,7 +12,10 @@ import pyblish.api
 
 @pyblish.api.log
 class SelectContextVersion(pyblish.api.Selector):
-    """Collects ftrack data from FTRACK_CONNECT_EVENT"""
+    """Finds version in the filename or passes the one found in the context
+        Arguments:
+        version (int, optional): version number of the publish
+    """
 
     order = pyblish.api.Selector.order + 0.1
     hosts = ['*']

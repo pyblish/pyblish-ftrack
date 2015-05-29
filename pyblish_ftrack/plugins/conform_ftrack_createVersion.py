@@ -19,6 +19,7 @@ class FtrackCreateVersion(pyblish.api.Conformer):
 
     def process_instance(self, instance):
 
+
         if instance.has_data('ftrackComponent'):
             if instance.context.data('createFtrackVersion'):
                 self.log.debug('CREATING VERSION')
