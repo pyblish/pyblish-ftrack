@@ -9,7 +9,7 @@ class FtrackUploadComponent(pyblish.api.Conformer):
         Arguments:
             ftrackComponent (string): path that will be saved as a component
             ftrackComponentName (string): component name
-            ftrackVersionID (string): ID of a version where component should be created
+            ftrackData (dictionary): Necessary ftrack information gathered by select_ftrack
             ftrackReviewable (string, optional): will make
     """
 
@@ -24,8 +24,10 @@ class FtrackUploadComponent(pyblish.api.Conformer):
         if instance.has_data('ftrackComponent') and instance.has_data('ftrackComponentName'):
             sourcePath = os.path.normpath(instance.data('ftrackComponent'))
 
-            if instance.context.has_data('ftrackVersionID'):
-                version = ftrack.AssetVersion(id=instance.context.data('ftrackVersionID'))
+            ftrack_data = instance.context.data('ftrackData')
+
+            if 'AssetVersion' in ftrack_data:
+                version = ftrack.AssetVersion(id=ftrack_data['AssetVersion']['id'])
                 componentName = instance.data('ftrackComponentName')
 
                 createComponent = True
