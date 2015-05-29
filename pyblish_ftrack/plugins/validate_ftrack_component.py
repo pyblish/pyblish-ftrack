@@ -17,14 +17,21 @@ class ValidateFtrackComponent(pyblish.api.Validator):
 
     def process_instance(self, instance):
 
+        assert instance.context.has_data('ftrackData'), 'Missing ftrackData in context.'
+
+        ftrack_data = instance.context.data('ftrackData')
+
         if instance.has_data('ftrackComponentName'):
-            if instance.context.data('ftrackVersionID'):
-                version = ftrack.AssetVersion(id=instance.context.data('ftrackVersionID'))
-                components = version.getComponents()
+            if 'AssetVersion' in ftrack_data:
+                asset_version = ftrack.AssetVersion(id=ftrack_data['AssetVersion']['id'])
+                components = asset_version.getComponents()
+                component_name = instance.has_data('ftrackComponentName')
+
                 for c in components:
-                    if instance.data('ftrackComponentName') == c.getName():
-                        raise pyblish.api.ValidationError('Component {} already exists in this ftrack version.'.format(instance.data('ftrackComponentName')))
+                    if component_name == c.getName():
+                        raise pyblish.api.ValidationError('Component {} already exists in this ftrack version.'.format(component_name))
+
             else:
-                self.log.info('No components to validate againsts')
+                self.log.info('No version found for validating components')
         else:
             self.log.warning('Missing ftrackComponentName')

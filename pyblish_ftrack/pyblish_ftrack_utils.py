@@ -49,7 +49,6 @@ def getData(taskid):
     for parent in parents:
         tempdic = {}
         if parent.get('entityType') == 'task' and parent.getObjectType():
-            print parent
             objectType = parent.getObjectType()
             tempdic['name'] = parent.getName()
             tempdic['description'] = parent.getDescription()

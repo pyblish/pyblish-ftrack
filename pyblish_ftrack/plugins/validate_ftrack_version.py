@@ -17,27 +17,13 @@ class ValidateFtrackVersion(pyblish.api.Validator):
 
     def process_instance(self, instance):
 
-        if instance.context.data('ftrackData')['version']['number']:
+        assert instance.context.has_data('version'), 'Missing version in context.'
+        assert instance.context.has_data('ftrackData'), 'Missing ftrackData in context.'
 
-            versionNumber = instance.context.data('ftrackData')['version']['number']
+        ftrack_data = instance.context.data('ftrackData')
 
-            asset = ftrack.Asset(id=instance.context.data('ftrackData')['Asset']['id'])
+        if 'AssetVersion' in ftrack_data:
+            asset_version = ftrack.AssetVersion(id=ftrack_data['AssetVersion']['id'])
+            self.log.debug('Validating AssetVersion with ID {}'.format(ftrack_data['AssetVersion']['id']))
 
-            version = None
-            for v in asset.getVersions():
-                if int(v.getVersion()) == int(versionNumber):
-                    if not v.get('ispublished'):
-                        version = v
-                        instance.context.set_data('ftrackVersionID', value=version.getId())
-                        raise pyblish.api.ValidationError('This version already exists, but is not visible in the UI.')
-                    else:
-                        version = v
-                        instance.context.set_data('ftrackVersionID', value=version.getId())
-                        self.log.warning('This version already exists. Will check for existence of  components')
-
-            if not version:
-                instance.context.set_data('createFtrackVersion', value=True)
-                self.log.info('Setting createFtrackVersion arguments')
-
-        else:
-            self.log.warning('Missing version in instance data')
+            assert asset_version.get('ispublished'), "AssetVersion exists but is not visible in UI"

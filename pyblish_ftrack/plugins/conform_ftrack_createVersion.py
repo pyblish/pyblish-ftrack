@@ -20,21 +20,23 @@ class FtrackCreateVersion(pyblish.api.Conformer):
     def process_instance(self, instance):
 
         if instance.has_data('ftrackComponent'):
-            if instance.context.data('createFtrackVersion') and not instance.context.has_data('ftrackVersionID'):
-                self.log.info('CREATING VERSION')
-                versionNumber = instance.context.data('ftrackData')['version']['number']
+            if instance.context.data('createFtrackVersion'):
+                self.log.debug('CREATING VERSION')
+                version_number = instance.context.data('version')
+                ftrack_data = instance.context.data('ftrackData')
+                taskid = ftrack_data['Task']['id']
 
-                taskid = instance.context.data('ftrackData')['Task']['id']
-
-                asset = ftrack.Asset(id=instance.context.data('ftrackData')['Asset']['id'])
-                self.log.info('Using ftrack asset {}'.format(asset.getName()))
+                asset = ftrack.Asset(id=ftrack_data['Asset']['id'])
+                self.log.debug('Using ftrack asset {}'.format(asset.getName()))
 
                 version = asset.createVersion(comment='', taskid=taskid)
 
-                if int(version.getVersion()) != int(versionNumber):
-                    version.set('version', value=int(versionNumber))
+                if int(version.getVersion()) != version_number:
+                    version.set('version', value=version_number)
 
-                instance.context.set_data('ftrackVersionID', value=version.getId())
+                ftrack_data['AssetVersion'] = {'id': version.getId(),
+                                               'number': version_number,
+                                               }
                 version.publish()
         else:
-            self.log.warning('Didn\'t create ftrack version because workfile wasn\'t published')
+            self.log.warning('Didn\'t create ftrack version. ftrackComponent arguments not found.')
