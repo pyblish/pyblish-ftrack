@@ -33,7 +33,6 @@ class FtrackUploadComponent(pyblish.api.Conformer):
                 components = instance.data('ftrackComponents')
                 for component_name in components:
                     # creating component
-                    component = components[component_name]
                     path = components[component_name]['path']
 
                     try:
