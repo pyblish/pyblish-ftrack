@@ -7,7 +7,10 @@ class FtrackCreateVersion(pyblish.api.Conformer):
 
         Arguments:
             ftrackData (dictionary): Necessary ftrack information gathered by select_ftrack
-            ftrackComponent (string):  path that will be saved as a component
+            ftrackComponents (list): list of dictionaries describing components
+                item (dict): required keys in dictionary:
+                    name (string): name of the component
+                    path (string): path of the component
             createFtrackVersion (boolean): boolean variable set by validate_ftrack_version
     """
 
@@ -20,7 +23,7 @@ class FtrackCreateVersion(pyblish.api.Conformer):
     def process_instance(self, instance):
 
 
-        if instance.has_data('ftrackComponent'):
+        if instance.has_data('ftrackComponents'):
             if instance.context.data('createFtrackVersion'):
                 self.log.debug('CREATING VERSION')
                 version_number = instance.context.data('version')
@@ -40,4 +43,6 @@ class FtrackCreateVersion(pyblish.api.Conformer):
                                                }
                 version.publish()
         else:
-            self.log.warning('Didn\'t create ftrack version. ftrackComponent arguments not found.')
+            msg = "Didn't create ftrack version."
+            msg += " ftrackComponents argument not found."
+            self.log.warning(msg)
