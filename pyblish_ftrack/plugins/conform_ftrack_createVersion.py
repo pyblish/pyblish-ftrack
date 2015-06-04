@@ -30,7 +30,10 @@ class FtrackCreateVersion(pyblish.api.Conformer):
                 asset = ftrack.Asset(id=ftrack_data['Asset']['id'])
                 self.log.debug('Using ftrack asset {}'.format(asset.getName()))
 
-                version = asset.createVersion(comment='', taskid=taskid)
+                try:
+                    version = asset.createVersion(comment='', taskid=taskid)
+                except:
+                    self.log.warning('Version already exists.')
 
                 if int(version.getVersion()) != version_number:
                     version.set('version', value=version_number)
