@@ -2,7 +2,7 @@ import pyblish.api
 import ftrack
 
 @pyblish.api.log
-class FtrackCreateVersion(pyblish.api.Conformer):
+class FtrackCreateVersion(pyblish.api.Extractor):
     """ Creates ftrack version for currently running publish.
 
         Arguments:
@@ -14,7 +14,6 @@ class FtrackCreateVersion(pyblish.api.Conformer):
             createFtrackVersion (boolean): boolean variable set by validate_ftrack_version
     """
 
-    order = pyblish.api.Conformer.order + 0.1
     families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
