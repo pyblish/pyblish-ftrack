@@ -15,7 +15,7 @@ class ValidateFtrackVersion(pyblish.api.Validator):
     version = (0, 1, 0)
     name = "Validate Ftrack Version"
 
-    def process_instance(self, instance):
+    def process(self, instance):
 
         if instance.context.has_data('ftrackData'):
             assert instance.context.has_data('version'), 'Missing version in context.'

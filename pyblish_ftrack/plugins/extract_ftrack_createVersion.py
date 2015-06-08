@@ -19,7 +19,7 @@ class FtrackCreateVersion(pyblish.api.Extractor):
     version = (0, 1, 0)
     name = 'Create Ftrack Version'
 
-    def process_instance(self, instance):
+    def process(self, instance):
 
         if instance.has_data('ftrackComponents'):
             if instance.context.data('createFtrackVersion'):

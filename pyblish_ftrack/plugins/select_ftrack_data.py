@@ -21,7 +21,7 @@ class CollectFtrackData(pyblish.api.Selector):
     hosts = ['*']
     version = (0, 1, 0)
 
-    def process_context(self, context):
+    def process(self, context):
 
         decodedEventData = json.loads(
             base64.b64decode(

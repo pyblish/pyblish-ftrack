@@ -19,7 +19,7 @@ class FtrackUploadComponent(pyblish.api.Conformer):
     version = (0, 1, 0)
     name = "Create Ftrack Components"
 
-    def process_instance(self, instance):
+    def process(self, instance):
 
         # check for components exsitence
         if instance.has_data('ftrackComponents'):

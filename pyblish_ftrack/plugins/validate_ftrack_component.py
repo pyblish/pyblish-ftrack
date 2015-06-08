@@ -18,7 +18,7 @@ class ValidateFtrackComponent(pyblish.api.Validator):
     version = (0, 1, 0)
     name = "Validate Ftrack Components"
 
-    def process_instance(self, instance):
+    def process(self, instance):
 
         # skipping validation if the extension wants to create a new version
         if instance.context.data('createFtrackVersion'):
