@@ -16,6 +16,7 @@ class ValidateFtrackComponent(pyblish.api.Validator):
     families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
+    name = "Validate Ftrack Components"
 
     def process_instance(self, instance):
 
@@ -27,8 +28,7 @@ class ValidateFtrackComponent(pyblish.api.Validator):
             return
 
         # checking for required items
-        if instance.has_data('ftrackComponents') and \
-        instance.context.has_data('ftrackData'):
+        if instance.has_data('ftrackComponents') and instance.context.has_data('ftrackData'):
 
             ftrack_data = instance.context.data('ftrackData')
 
@@ -44,9 +44,15 @@ class ValidateFtrackComponent(pyblish.api.Validator):
 
             for local_c in local_components:
                 for online_c in online_components:
+                    online_name = online_c.getName()
                     # checking name matching
-                    if local_c == online_c.getName():
-                        self.log.debug('Component exists!')
+                    if 'reviewable' in local_components[local_c]:
+                        msg = 'Reviewable component already exists in the version. To replace it' \
+                              ' delete it in the webUI first'
+                        assert online_name not in ('ftrackreview-mp4', 'ftrackreview-webm'), msg
+                    if local_c == online_name:
+                        self.log.warning('{} component already exists! To replace it'
+                                         ' delete it in the webUI first'.format(local_c))
         else:
             msg = 'No ftrackData or ftrackComponents present. '
             msg += 'Skipping this instance.'
