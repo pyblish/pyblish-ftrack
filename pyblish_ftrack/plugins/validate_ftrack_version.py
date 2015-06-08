@@ -13,6 +13,7 @@ class ValidateFtrackVersion(pyblish.api.Validator):
     families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
+    name = "Validate Ftrack Version"
 
     def process_instance(self, instance):
 

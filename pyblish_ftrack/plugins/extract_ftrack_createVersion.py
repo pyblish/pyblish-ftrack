@@ -17,6 +17,7 @@ class FtrackCreateVersion(pyblish.api.Extractor):
     families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
+    name = 'Create Ftrack Version'
 
     def process_instance(self, instance):
 
