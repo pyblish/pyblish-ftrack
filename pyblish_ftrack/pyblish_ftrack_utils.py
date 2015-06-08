@@ -36,7 +36,8 @@ def getData(taskid):
         'Project': {
                 'name': project.get('fullname'),
                 'code': project.get('name'),
-                'id': task.get('showid')
+                'id': task.get('showid'),
+                'root': project.getRoot(),
         },
         entityType: {
                 'type': taskType,
