@@ -16,7 +16,7 @@ class FtrackUploadComponent(pyblish.api.Conformer):
     families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
-    name = "Create Ftrack Components"
+    label = "Create Ftrack Components"
 
     def process(self, instance):
 

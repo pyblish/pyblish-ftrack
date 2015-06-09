@@ -16,7 +16,7 @@ class ValidateFtrackComponent(pyblish.api.Validator):
     families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
-    name = "Validate Ftrack Components"
+    label = "Validate Ftrack Components"
 
     def process(self, instance):
 
