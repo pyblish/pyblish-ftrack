@@ -16,9 +16,9 @@ class ValidateFtrackComponent(pyblish.api.Validator):
     families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
-    optional = True
+    label = "Validate Ftrack Components"
 
-    def process_instance(self, instance):
+    def process(self, instance):
 
         # skipping validation if the extension wants to create a new version
         if instance.context.data('createFtrackVersion'):
@@ -28,38 +28,31 @@ class ValidateFtrackComponent(pyblish.api.Validator):
             return
 
         # checking for required items
-        if instance.has_data('ftrackComponents') and \
-        instance.context.has_data('ftrackData'):
+        if instance.has_data('ftrackComponents') and instance.context.has_data('ftrackData'):
 
-           ftrack_data = instance.context.data('ftrackData')
+            ftrack_data = instance.context.data('ftrackData')
 
-           # raising error, as we are assuming the user wants to publish
-           # to ftrack at this point
-           msg = 'No version found for validating components'
-           assert 'AssetVersion' in ftrack_data, msg
+            # raising error, as we are assuming the user wants to publish
+            # to ftrack at this point
+            msg = 'No version found for validating components'
+            assert 'AssetVersion' in ftrack_data, msg
 
-           version_id = ftrack_data['AssetVersion']['id']
-           asset_version = ftrack.AssetVersion(id=version_id)
-           online_components = asset_version.getComponents()
-           local_components = instance.data('ftrackComponents')
+            version_id = ftrack_data['AssetVersion']['id']
+            asset_version = ftrack.AssetVersion(id=version_id)
+            online_components = asset_version.getComponents()
+            local_components = instance.data('ftrackComponents')
 
-           for local_c in local_components:
-               local_component = local_components[local_c]
-               for online_c in online_components:
-
-                   # checking name matching
-                   if local_c == online_c.getName():
-
-                       # checking value matching
-                       path = local_component['path']
-                       if path != online_c.getFile():
-                           msg = "Component exists, but values aren't the same:"
-                           msg += "\n\nComponent: %s" % local_c
-                           msg += "\n\nLocal value: %s" % path
-                           msg += "\n\nOnline value: %s" % online_c.getFile()
-                           raise ValueError(msg)
-                       else:
-                           self.log.debug('Component exists!')
+            for local_c in local_components:
+                for online_c in online_components:
+                    online_name = online_c.getName()
+                    # checking name matching
+                    if 'reviewable' in local_components[local_c]:
+                        msg = 'Reviewable component already exists in the version. To replace it' \
+                              ' delete it in the webUI first'
+                        assert online_name not in ('ftrackreview-mp4', 'ftrackreview-webm'), msg
+                    if local_c == online_name:
+                        self.log.warning('{} component already exists! To replace it'
+                                         ' delete it in the webUI first'.format(local_c))
         else:
             msg = 'No ftrackData or ftrackComponents present. '
             msg += 'Skipping this instance.'

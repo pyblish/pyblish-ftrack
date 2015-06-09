@@ -21,7 +21,7 @@ class CollectFtrackData(pyblish.api.Selector):
     hosts = ['*']
     version = (0, 1, 0)
 
-    def process_context(self, context):
+    def process(self, context):
 
         decodedEventData = json.loads(
             base64.b64decode(
@@ -30,12 +30,16 @@ class CollectFtrackData(pyblish.api.Selector):
         )
 
         taskid = decodedEventData.get('selection')[0]['entityId']
-        ftrack_data = pyblish_ftrack_utils.getData(taskid)
+        ftrack_data = pyblish_ftrack_utils.get_data(taskid)
 
+        self.log.debug(str(ftrack_data))
         # Get ftrack Asset
         task = ftrack.Task(taskid)
 
-        shot = ftrack.Shot(id=ftrack_data['Shot']['id'])
+        try:
+            parent = ftrack.Shot(id=ftrack_data['Shot']['id'])
+        except:
+            parent = ftrack.Shot(id=ftrack_data['Asset_Build']['id'])
 
         asset_type = ftrack_data['Task']['code']
         asset_name = ftrack_data['Task']['type']
@@ -53,7 +57,7 @@ class CollectFtrackData(pyblish.api.Selector):
                     asset = a
         else:
             self.log.info('Creating new asset')
-            asset = shot.createAsset(name=asset_name, assetType=asset_type, task=task)
+            asset = parent.createAsset(name=asset_name, assetType=asset_type, task=task)
 
         self.log.info('Using ftrack asset {}'.format(asset.getName()))
 

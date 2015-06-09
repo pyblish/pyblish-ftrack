@@ -1,8 +1,5 @@
 import os
-import json
-import base64
 import sys
-import ftrack
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyblish_ftrack_utils
@@ -21,7 +18,7 @@ class SelectContextVersion(pyblish.api.Selector):
     hosts = ['*']
     version = (0, 1, 0)
 
-    def process_context(self, context):
+    def process(self, context):
 
         # Get version number
         if not context.has_data('version'):

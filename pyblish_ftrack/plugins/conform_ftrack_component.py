@@ -1,5 +1,4 @@
 import pyblish.api
-import os
 import ftrack
 
 @pyblish.api.log
@@ -17,9 +16,9 @@ class FtrackUploadComponent(pyblish.api.Conformer):
     families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
-    optional = True
+    label = "Create Ftrack Components"
 
-    def process_instance(self, instance):
+    def process(self, instance):
 
         # check for components exsitence
         if instance.has_data('ftrackComponents'):
@@ -34,13 +33,22 @@ class FtrackUploadComponent(pyblish.api.Conformer):
                 for component_name in components:
                     # creating component
                     path = components[component_name]['path']
-
                     try:
                         version.createComponent(name=component_name, path=path)
                     except:
                         msg = 'No new component created.'
                         msg += ' Existing component matches'
                         self.log.debug(msg)
+                    # make reviewable
+                    if 'reviewable' in components[component_name]:
+                        upload = True
+                        for component in version.getComponents():
+                            if component_name in ('ftrackreview-mp4', 'ftrackreview-webm'):
+                                upload = False
+                                break
+                        if upload:
+                            ftrack.Review.makeReviewable(version, path)
+
             else:
                 self.log.warning('No AssetVersion id found in context')
         else:
