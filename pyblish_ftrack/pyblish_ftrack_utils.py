@@ -21,7 +21,7 @@ task_codes = {
 
 
 # Collect all ftrack data and store it in a dictionary
-def getData(taskid):
+def get_data(taskid):
     try:
         task = ftrack.Task(id=taskid)
     except ValueError:
@@ -67,24 +67,24 @@ def version_up(string):
     try:
         (prefix, v) = version_get(string, 'v')
         v = int(v)
-        file = version_set(string, prefix, v, v+1)
+        v_file = version_set(string, prefix, v, v+1)
     except:
-        raise ValueError, 'Unable to version up File'
+        raise ValueError('Unable to version up File')
 
-    return file
+    return v_file
 
-def version_get(string, prefix, suffix = None):
+def version_get(string, prefix):
     """Extract version information from filenames.  Code from Foundry's nukescripts.version_get()"""
 
     if string is None:
-       raise ValueError, "Empty version string - no match"
+        raise ValueError("Empty version string - no match")
 
     regex = "[/_.]"+prefix+"\d+"
     matches = re.findall(regex, string, re.IGNORECASE)
     if not len(matches):
         msg = "No \"_"+prefix+"#\" found in \""+string+"\""
-        raise ValueError, msg
-    return (matches[-1:][0][1], re.search("\d+", matches[-1:][0]).group())
+        raise ValueError(msg)
+    return matches[-1:][0][1], re.search("\d+", matches[-1:][0]).group()
 
 
 def version_set(string, prefix, oldintval, newintval):

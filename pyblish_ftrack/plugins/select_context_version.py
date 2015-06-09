@@ -1,8 +1,5 @@
 import os
-import json
-import base64
 import sys
-import ftrack
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyblish_ftrack_utils

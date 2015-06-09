@@ -30,7 +30,7 @@ class CollectFtrackData(pyblish.api.Selector):
         )
 
         taskid = decodedEventData.get('selection')[0]['entityId']
-        ftrack_data = pyblish_ftrack_utils.getData(taskid)
+        ftrack_data = pyblish_ftrack_utils.get_data(taskid)
 
         self.log.debug(str(ftrack_data))
         # Get ftrack Asset
