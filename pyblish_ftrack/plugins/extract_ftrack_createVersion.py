@@ -19,13 +19,16 @@ class FtrackCreateVersion(pyblish.api.Extractor):
     version = (0, 1, 0)
     label = 'Create Ftrack Version'
 
-    def process(self, instance):
+    def process(self, context, instance):
 
         if instance.has_data('ftrackComponents'):
-            if instance.context.data('createFtrackVersion'):
+
+            ftrack_data = context.data('ftrackData')
+
+            if context.has_data('createFtrackVersion'):
                 self.log.debug('CREATING VERSION')
-                version_number = instance.context.data('version')
-                ftrack_data = instance.context.data('ftrackData')
+                version_number = context.data('version')
+
                 if 'AssetVersion' not in ftrack_data:
                     taskid = ftrack_data['Task']['id']
 
@@ -44,6 +47,7 @@ class FtrackCreateVersion(pyblish.api.Extractor):
                                                    'number': version_number,
                                                    }
                     version.publish()
+
         else:
             msg = "Didn't create ftrack version."
             msg += " ftrackComponents argument not found."
