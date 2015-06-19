@@ -4,7 +4,7 @@ import ftrack
 
 @pyblish.api.log
 class ExtractFtrack(pyblish.api.Extractor):
-    """ Creating any Asset, AssetVersion and/or Componenet in Ftrack.
+    """ Creating any Asset or AssetVersion in Ftrack.
     """
 
     label = 'Ftrack'
@@ -72,24 +72,8 @@ class ExtractFtrack(pyblish.api.Extractor):
             # using existing version
             version = ftrack.AssetVersion(ftrack_data['AssetVersion']['id'])
 
-        # creating components
-        components = instance.data('ftrackComponents')
-        for component_name in instance.data('ftrackComponents'):
+        # adding asset to ftrack data
+        ftrack_data['AssetVersion'] = {'id': version.getId()}
 
-            # creating component
-            path = components[component_name]['path']
-            try:
-                version.createComponent(name=component_name, path=path)
-                self.log.info('Creating "%s" component.' % component_name)
-            except:
-                pass
-
-            # make reviewable
-            if 'reviewable' in components[component_name]:
-                upload = True
-                for component in version.getComponents():
-                    if component_name in ('ftrackreview-mp4', 'ftrackreview-webm'):
-                        upload = False
-                        break
-                if upload:
-                    ftrack.Review.makeReviewable(version, path)
+        # setting ftrackData
+        instance.context.set_data('ftrackData', value=ftrack_data)
