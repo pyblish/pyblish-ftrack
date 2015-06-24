@@ -36,7 +36,7 @@ class ValidateFtrack(pyblish.api.Validator):
             # searching for existing asset
             asset_name = instance.context.data('ftrackAssetName')
             for a in assets:
-                if asset_name == a.getName():
+                if asset_name.lower() == a.getName().lower():
                     asset = a
                     create_asset = False
 
