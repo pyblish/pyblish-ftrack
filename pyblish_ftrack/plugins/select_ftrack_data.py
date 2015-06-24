@@ -3,6 +3,7 @@ import json
 import base64
 import sys
 import ftrack
+import pyblish_qml
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyblish_ftrack_utils
@@ -42,7 +43,14 @@ class CollectFtrackData(pyblish.api.Selector):
             parent = ftrack.Shot(id=ftrack_data['Asset_Build']['id'])
 
         asset_type = ftrack_data['Task']['code']
+
+
+        if asset_type == 'light':
+            asset_type = 'render'
+
         asset_name = ftrack_data['Task']['type']
+
+
 
         assets = task.getAssets(assetTypes=[asset_type])
 
@@ -89,5 +97,10 @@ class CollectFtrackData(pyblish.api.Selector):
         # set ftrack data
         self.log.debug('ftrackData: \n' + str(ftrack_data))
         context.set_data('ftrackData', value=ftrack_data)
+
+        context.set_data("label", "The World")
+
+
+        pyblish_qml.settings.WindowTitle = 'testin path/ shot/ task'
 
         self.log.info('Found ftrack data')
