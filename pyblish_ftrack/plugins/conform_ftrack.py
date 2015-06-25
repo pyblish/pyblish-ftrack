@@ -30,7 +30,11 @@ class ConformFtrack(pyblish.api.Conformer):
         for component_name in instance.data('ftrackComponents'):
 
             # creating component
-            path = components[component_name]['path']
+            try:
+                path = components[component_name]['path']
+            except:
+                return
+
             try:
                 version.createComponent(name=component_name, path=path)
                 self.log.info('Creating "%s" component.' % component_name)
