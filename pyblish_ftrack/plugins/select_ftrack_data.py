@@ -95,18 +95,13 @@ class CollectFtrackData(pyblish.api.Selector):
             self.log.debug('Setting createFtrackVersion arguments')
             self.log.warning('Missing version number in context.')
 
-=======
->>>>>>> Instructions
         # set ftrack data
         context.set_data('ftrackData', value=ftrack_data)
 
-<<<<<<< HEAD
-        context.set_data("label", "The World")
 
+        context.set_data("label", "The World")
 
         pyblish_qml.settings.WindowTitle = 'testin path/ shot/ task'
 
-        self.log.info('Found ftrack data')
-=======
         self.log.info('Found ftrack data: \n\n%s' % ftrack_data)
->>>>>>> Instructions
+
