@@ -19,7 +19,8 @@ class ValidateFtrack(pyblish.api.Validator):
 
         # skipping instance if ftrackComponents isn't present
         if not instance.has_data('ftrackComponents'):
-            self.log.info('No ftrackComponents present. Skipping this instance')
+            self.log.info('No ftrackComponents present\
+                           Skipping this instance')
             return
 
         ftrack_data = instance.context.data('ftrackData').copy()
@@ -121,7 +122,8 @@ class ValidateFtrack(pyblish.api.Validator):
                         msg = 'Reviewable component already exists in the\
                                version. To replace it\
                                delete it in the webUI first'
-                        assert online_c.getName() not in ('ftrackreview-mp4', 'ftrackreview-webm'), msg
+                        assert online_c.getName() not in
+                        ('ftrackreview-mp4', 'ftrackreview-webm'), msg
 
         # setting ftrackData
         instance.context.set_data('ftrackData', value=ftrack_data)
