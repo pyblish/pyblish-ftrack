@@ -13,7 +13,7 @@ class CollectFtrackData(pyblish.api.Selector):
             version (int): version number of the publish
     """
 
-    order = pyblish.api.Selector.order + 0.11
+    order = pyblish.api.Selector.order
     hosts = ['*']
     version = (0, 1, 0)
 
