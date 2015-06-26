@@ -1,6 +1,6 @@
 import pyblish.api
-
 import ftrack
+
 
 @pyblish.api.log
 class ValidateFtrack(pyblish.api.Validator):
@@ -28,7 +28,10 @@ class ValidateFtrack(pyblish.api.Validator):
         # checking asset
         create_asset = True
         asset = None
-        asset_type = ftrack_data['Task']['code']
+        if instance.context.has_data('ftrackAssetType'):
+            asset_type = instance.context.data('ftrackAssetType')
+        else:
+            asset_type = ftrack_data['Task']['code']
         assets = task.getParent().getAssets(assetTypes=[asset_type])
 
         if instance.context.has_data('ftrackAssetName'):
@@ -115,8 +118,9 @@ class ValidateFtrack(pyblish.api.Validator):
 
                     # validating review components
                     if 'reviewable' in ftrack_components[local_c]:
-                        msg = 'Reviewable component already exists in the version. To replace it' \
-                              ' delete it in the webUI first'
+                        msg = 'Reviewable component already exists in the\
+                               version. To replace it\
+                               delete it in the webUI first'
                         assert online_c.getName() not in ('ftrackreview-mp4', 'ftrackreview-webm'), msg
 
         # setting ftrackData

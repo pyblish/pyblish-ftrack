@@ -34,7 +34,12 @@ class ExtractFtrack(pyblish.api.Extractor):
             if instance.context.has_data('ftrackAssetName'):
 
                 asset_name = instance.context.data('ftrackAssetName')
-                asset_type = ftrack_data['Task']['code']
+
+                if instance.context.has_data('ftrackAssetType'):
+                    asset_type = instance.context.data('ftrackAssetType')
+                else:
+                    asset_type = ftrack_data['Task']['code']
+
                 asset = parent.createAsset(name=asset_name,
                                            assetType=asset_type, task=task)
 
