@@ -25,7 +25,8 @@ class ExtractFtrack(pyblish.api.Extractor):
         ftrack_data = context.data('ftrackData').copy()
         task = ftrack.Task(ftrack_data['Task']['id'])
         parent = task.getParent()
-
+        asset_data = None
+        create_version = False
         # creating asset
         if instance.data('ftrackAssetCreate'):
             asset = None
@@ -61,10 +62,11 @@ class ExtractFtrack(pyblish.api.Extractor):
                           'name': asset.getName()}
             create_version = True
 
+        if not asset_data:
+            asset_data = instance.data('ftrackAsset')
         # creating version
         version = None
         if instance.data('ftrackAssetVersionCreate') or create_version:
-            asset_data = instance.data('ftrackAsset')
             asset = ftrack.Asset(asset_data['id'])
             taskid = ftrack_data['Task']['id']
             version_number = int(context.data('version'))
