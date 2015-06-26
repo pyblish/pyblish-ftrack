@@ -2,6 +2,7 @@ import pyblish.api
 
 import ftrack
 
+
 @pyblish.api.log
 class ExtractFtrack(pyblish.api.Extractor):
     """ Creating any Asset or AssetVersion in Ftrack.
@@ -18,14 +19,14 @@ class ExtractFtrack(pyblish.api.Extractor):
 
         # skipping instance if ftrackComponents isn't present
         if not instance.has_data('ftrackComponents'):
-            self.log.info('No ftrackComponents present. Skipping this instance')
+            self.log.info('No ftrackComponents found. Skipping this instance')
             return
 
         ftrack_data = instance.context.data('ftrackData').copy()
         task = ftrack.Task(ftrack_data['Task']['id'])
         parent = task.getParent()
 
-        #creating asset
+        # creating asset
         if instance.context.data('ftrackAssetCreate'):
             asset = None
 

@@ -4,10 +4,6 @@ import base64
 import sys
 import ftrack
 import pyblish_qml
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import pyblish_ftrack_utils
-
 import pyblish.api
 
 
@@ -31,7 +27,7 @@ class CollectFtrackData(pyblish.api.Selector):
         )
 
         taskid = decodedEventData.get('selection')[0]['entityId']
-        ftrack_data = pyblish_ftrack_utils.get_data(taskid)
+        ftrack_data = self.get_data(taskid)
 
         self.log.debug(str(ftrack_data))
         # Get ftrack Asset
@@ -44,28 +40,29 @@ class CollectFtrackData(pyblish.api.Selector):
 
         asset_type = ftrack_data['Task']['code']
 
-
         if asset_type == 'light':
             asset_type = 'render'
 
         asset_name = ftrack_data['Task']['type']
-
-
 
         assets = task.getAssets(assetTypes=[asset_type])
 
         if assets:
             for a in assets:
                 if a.getName() == asset_name:
-                    self.log.info('Found existing asset with name {}'.format(a.getName()))
+                    self.log.info('Found existing asset with name\
+                    {}'.format(a.getName()))
                     asset = a
                     break
                 else:
-                    self.log.info('Found existing asset with name {}'.format(a.getName()))
+                    self.log.info('Found existing asset with name\
+                    {}'.format(a.getName()))
                     asset = a
         else:
             self.log.info('Creating new asset')
-            asset = parent.createAsset(name=asset_name, assetType=asset_type, task=task)
+            asset = parent.createAsset(name=asset_name,
+                                       assetType=asset_type,
+                                       task=task)
 
         self.log.info('Using ftrack asset {}'.format(asset.getName()))
 
@@ -84,7 +81,8 @@ class CollectFtrackData(pyblish.api.Selector):
                     ftrack_data['AssetVersion'] = {'id': version.getId(),
                                                    'number': version_number,
                                                    }
-                    self.log.warning('This version already exists. Will check for existence of  components')
+                    self.log.warning('This version already exists. Will\
+                                     check for existence of  components')
 
             if not version:
                 context.set_data('createFtrackVersion', value=True)
@@ -97,10 +95,62 @@ class CollectFtrackData(pyblish.api.Selector):
         # set ftrack data
         context.set_data('ftrackData', value=ftrack_data)
 
-
         context.set_data("label", "The World")
 
         pyblish_qml.settings.WindowTitle = 'testin path/ shot/ task'
 
         self.log.info('Found ftrack data: \n\n%s' % ftrack_data)
 
+    def get_data(self, taskid):
+
+        task_codes = {
+            'Animation': 'anim',
+            'Layout': 'layout',
+            'FX': 'fx',
+            'Compositing': 'comp',
+            'Motion Graphics': 'mograph',
+            'Lighting': 'light',
+            'Modelling': 'geo',
+            'Rigging': 'rig',
+            'Art': 'art',
+        }
+
+        try:
+            task = ftrack.Task(id=taskid)
+        except ValueError:
+            task = None
+
+        parents = task.getParents()
+        project = ftrack.Project(task.get('showid'))
+        taskType = task.getType().getName()
+        entityType = task.getObjectType()
+
+        ctx = {
+            'Project': {
+                    'name': project.get('fullname'),
+                    'code': project.get('name'),
+                    'id': task.get('showid'),
+                    'root': project.getRoot(),
+            },
+            entityType: {
+                    'type': taskType,
+                    'name': task.getName(),
+                    'id': task.getId(),
+                    'code': task_codes.get(taskType, None)
+            }
+        }
+
+        for parent in parents:
+            tempdic = {}
+            if parent.get('entityType') == 'task' and parent.getObjectType():
+                objectType = parent.getObjectType()
+                tempdic['name'] = parent.getName()
+                tempdic['description'] = parent.getDescription()
+                tempdic['id'] = parent.getId()
+                if objectType == 'Asset Build':
+                    tempdic['type'] = parent.getType().get('name')
+                    objectType = objectType.replace(' ', '_')
+
+                ctx[objectType] = tempdic
+
+        return ctx

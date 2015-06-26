@@ -2,8 +2,10 @@ import re
 import ftrack
 
 #   ====================
-#   Task codes dictionary. This is needed to prevent file names and folders with full task type names.
-#   Hopefully a temporary code until this is implemented in ftrack webUI. Change the code to your liking.
+#   Task codes dictionary. This is needed to prevent file names and folders
+#   with full task type names.
+#   Hopefully a temporary code until this is implemented in ftrack webUI.
+#   Change the code to your liking.
 
 task_codes = {
     'Animation': 'anim',
@@ -73,8 +75,10 @@ def version_up(string):
 
     return v_file
 
+
 def version_get(string, prefix):
-    """Extract version information from filenames.  Code from Foundry's nukescripts.version_get()"""
+    """Extract version information from filenames.  Code from Foundry's
+    nukescripts.version_get()"""
 
     if string is None:
         raise ValueError("Empty version string - no match")
@@ -88,7 +92,8 @@ def version_get(string, prefix):
 
 
 def version_set(string, prefix, oldintval, newintval):
-    """Changes version information from filenames. Code from Foundry's nukescripts.version_set()"""
+    """Changes version information from filenames. Code from Foundry's
+    nukescripts.version_set()"""
 
     regex = "[/_.]"+prefix+"\d+"
     matches = re.findall(regex, string, re.IGNORECASE)
