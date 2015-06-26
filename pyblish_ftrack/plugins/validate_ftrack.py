@@ -10,10 +10,10 @@ class ValidateFtrack(pyblish.api.Validator):
     optional = True
     label = 'Ftrack'
 
-    def process(self, instance):
+    def process(self, instance, context):
 
         # skipping instance if ftrackData isn't present
-        if not instance.context.has_data('ftrackData'):
+        if not context.has_data('ftrackData'):
             self.log.info('No ftrackData present. Skipping this instance')
             return
 
@@ -23,22 +23,23 @@ class ValidateFtrack(pyblish.api.Validator):
                            Skipping this instance')
             return
 
-        ftrack_data = instance.context.data('ftrackData').copy()
+        ftrack_data = context.data('ftrackData').copy()
         task = ftrack.Task(ftrack_data['Task']['id'])
 
         # checking asset
         create_asset = True
         asset = None
-        if instance.context.has_data('ftrackAssetType'):
-            asset_type = instance.context.data('ftrackAssetType')
+        if instance.has_data('ftrackAssetType'):
+            asset_type = instance.data('ftrackAssetType')
         else:
             asset_type = ftrack_data['Task']['code']
+
         assets = task.getParent().getAssets(assetTypes=[asset_type])
 
-        if instance.context.has_data('ftrackAssetName'):
+        if instance.has_data('ftrackAssetName'):
 
             # searching for existing asset
-            asset_name = instance.context.data('ftrackAssetName')
+            asset_name = instance.data('ftrackAssetName')
             for a in assets:
                 if asset_name.lower() == a.getName().lower():
                     asset = a
@@ -61,22 +62,23 @@ class ValidateFtrack(pyblish.api.Validator):
 
         # adding asset to ftrack data
         if asset:
-            ftrack_data['Asset'] = {'id': asset.getId(),
-                                    'name': asset.getName()}
+            asset_data = {'id': asset.getId(),
+                          'name': asset.getName()}
+            instance.set_data('ftrackAsset', value=asset_data)
 
-        instance.context.set_data('ftrackAssetCreate', value=create_asset)
+        instance.set_data('ftrackAssetCreate', value=create_asset)
 
         # if we are creating a new asset,
         # then we don't need to validate the rest
         if create_asset:
-            instance.context.set_data('ftrackData', value=ftrack_data)
+            context.set_data('ftrackData', value=ftrack_data)
             return
 
         # checking version
         msg = 'Missing version in context.'
-        assert instance.context.has_data('version'), msg
+        assert context.has_data('version'), msg
 
-        version_number = int(instance.context.data('version'))
+        version_number = int(context.data('version'))
         create_version = True
         version = None
 
@@ -88,20 +90,22 @@ class ValidateFtrack(pyblish.api.Validator):
                 assert v.get('ispublished'), msg
 
                 version = v
-                ftrack_data['AssetVersion'] = {'id': v.getId(),
-                                               'number': version_number}
+                # ftrack_data['AssetVersion'] = {'id': v.getId(),
+                #                                'number': version_number}
+                asset_version = {'id': v.getId(), 'number': version_number}
+                instance.set_data('ftrackAssetVersion', value=asset_version)
+
                 create_version = False
 
                 msg = 'Found existing version number: %s' % version_number
                 self.log.info(msg)
 
-        instance.context.set_data('ftrackAssetVersionCreate',
-                                  value=create_version)
+        instance.set_data('ftrackAssetVersionCreate', value=create_version)
 
         # if we are creating a new asset version,
         # then we don't need to validate the rest
         if create_version:
-            instance.context.set_data('ftrackData', value=ftrack_data)
+            context.set_data('ftrackData', value=ftrack_data)
             return
 
         # checking components
@@ -122,8 +126,7 @@ class ValidateFtrack(pyblish.api.Validator):
                         msg = 'Reviewable component already exists in the\
                                version. To replace it\
                                delete it in the webUI first'
-                        assert online_c.getName() not in
-                        ('ftrackreview-mp4', 'ftrackreview-webm'), msg
+                        assert online_c.getName() not in ('ftrackreview-mp4', 'ftrackreview-webm'), msg
 
         # setting ftrackData
-        instance.context.set_data('ftrackData', value=ftrack_data)
+        context.set_data('ftrackData', value=ftrack_data)

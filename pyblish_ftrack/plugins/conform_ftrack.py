@@ -25,9 +25,9 @@ class ConformFtrack(pyblish.api.Conformer):
             return
 
         ftrack_data = instance.context.data('ftrackData')
-
+        asset_version = instance.data('ftrackAssetVersion')
         # creating components
-        version = ftrack.AssetVersion(ftrack_data['AssetVersion']['id'])
+        version = ftrack.AssetVersion(asset_version['id'])
         components = instance.data('ftrackComponents')
         for component_name in instance.data('ftrackComponents'):
 
