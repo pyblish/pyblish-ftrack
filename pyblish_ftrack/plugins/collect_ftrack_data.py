@@ -1,13 +1,13 @@
 import os
 import json
 import base64
-import sys
 import ftrack
 import pyblish.api
 
 
 @pyblish.api.log
 class CollectFtrackData(pyblish.api.Selector):
+
     """Collects ftrack data from FTRACK_CONNECT_EVENT
         Arguments:
             version (int): version number of the publish
@@ -59,16 +59,16 @@ class CollectFtrackData(pyblish.api.Selector):
 
         ctx = {
             'Project': {
-                    'name': project.get('fullname'),
-                    'code': project.get('name'),
-                    'id': task.get('showid'),
-                    'root': project.getRoot(),
+                'name': project.get('fullname'),
+                'code': project.get('name'),
+                'id': task.get('showid'),
+                'root': project.getRoot(),
             },
             entityType: {
-                    'type': taskType,
-                    'name': task.getName(),
-                    'id': task.getId(),
-                    'code': task_codes.get(taskType, None)
+                'type': taskType,
+                'name': task.getName(),
+                'id': task.getId(),
+                'code': task_codes.get(taskType, None)
             }
         }
 

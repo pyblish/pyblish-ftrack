@@ -4,6 +4,7 @@ import ftrack
 
 @pyblish.api.log
 class ValidateFtrack(pyblish.api.Validator):
+
     """ Validate the existence of Asset, AssetVersion and Components.
     """
 
@@ -131,7 +132,8 @@ class ValidateFtrack(pyblish.api.Validator):
                         msg = 'Reviewable component already exists in the\
                                version. To replace it\
                                delete it in the webUI first'
-                        assert online_c.getName() not in ('ftrackreview-mp4', 'ftrackreview-webm'), msg
+                        assert online_c.getName() not in (
+                            'ftrackreview-mp4', 'ftrackreview-webm'), msg
 
         # setting ftrackData
         context.set_data('ftrackData', value=ftrack_data)

@@ -1,10 +1,10 @@
 import pyblish.api
-
 import ftrack
 
 
 @pyblish.api.log
 class ExtractFtrack(pyblish.api.Extractor):
+
     """ Creating any Asset or AssetVersion in Ftrack.
     """
 
