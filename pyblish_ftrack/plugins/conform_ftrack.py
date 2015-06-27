@@ -2,6 +2,7 @@ import pyblish.api
 
 import ftrack
 
+
 @pyblish.api.log
 class ConformFtrack(pyblish.api.Conformer):
     """ Creating Componenets in Ftrack.
@@ -19,7 +20,8 @@ class ConformFtrack(pyblish.api.Conformer):
 
         # skipping instance if ftrackComponents isn't present
         if not instance.has_data('ftrackComponents'):
-            self.log.info('No ftrackComponents present. Skipping this instance')
+            self.log.info('No ftrackComponents present.\
+                           Skipping this instance')
             return
 
         ftrack_data = instance.context.data('ftrackData')
@@ -30,7 +32,11 @@ class ConformFtrack(pyblish.api.Conformer):
         for component_name in instance.data('ftrackComponents'):
 
             # creating component
-            path = components[component_name]['path']
+            try:
+                path = components[component_name]['path']
+            except:
+                return
+
             try:
                 version.createComponent(name=component_name, path=path)
                 self.log.info('Creating "%s" component.' % component_name)
@@ -41,7 +47,8 @@ class ConformFtrack(pyblish.api.Conformer):
             if 'reviewable' in components[component_name]:
                 upload = True
                 for component in version.getComponents():
-                    if component_name in ('ftrackreview-mp4', 'ftrackreview-webm'):
+                    if component_name in ('ftrackreview-mp4',
+                                          'ftrackreview-webm'):
                         upload = False
                         break
                 if upload:
