@@ -60,19 +60,23 @@ class ExtractFtrack(pyblish.api.Extractor):
             # adding asset to ftrack data
             asset_data = {'id': asset.getId(),
                           'name': asset.getName()}
-            create_version = True
 
         if not asset_data:
             asset_data = instance.data('ftrackAsset')
+
         # creating version
         version = None
-        if instance.data('ftrackAssetVersionCreate') or create_version:
+        if instance.data('ftrackAssetVersionCreate'):
             asset = ftrack.Asset(asset_data['id'])
             taskid = ftrack_data['Task']['id']
             version_number = int(context.data('version'))
 
-            version = asset.createVersion(comment='', taskid=taskid)
-            version.set('version', value=version_number)
+            try:
+                version = asset.createVersion(comment='', taskid=taskid)
+                version.set('version', value=version_number)
+            except:
+                version = self.GetVersionByNmber(asset, version_number)
+
             asset_version = {'id': version.getId(), 'number': version_number}
             instance.set_data('ftrackAssetVersion', value=asset_version)
             version.publish()
@@ -88,3 +92,11 @@ class ExtractFtrack(pyblish.api.Extractor):
 
         # setting ftrackData
         context.set_data('ftrackData', value=ftrack_data)
+
+    def GetVersionByNmber(self, asset, number):
+        for version in asset.getVersions():
+            try:
+                if version.getVersion() == int(number):
+                    return version
+            except:
+                return None

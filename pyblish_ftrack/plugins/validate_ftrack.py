@@ -35,7 +35,11 @@ class ValidateFtrack(pyblish.api.Validator):
         else:
             asset_type = ftrack_data['Task']['code']
 
-        assets = task.getParent().getAssets(assetTypes=[asset_type])
+        # TODO: Make sure we're looking for the correct asset type.
+        assets = task.getAssets(assetTypes=[asset_type])
+
+        if len(assets) == 0:
+            assets = task.getAssets()
 
         if instance.has_data('ftrackAssetName'):
 
@@ -50,21 +54,26 @@ class ValidateFtrack(pyblish.api.Validator):
                     self.log.info(msg)
         else:
             # if only one asset exists, then we'll use that asset
-            msg = "Can't compute asset. Multiple assets on shot:"
+            msg = "Can't compute asset."
             if len(assets) == 1:
+                print('FOUND ONE ASSET')
                 for a in assets:
                     print a
                     asset = a
                     create_asset = False
-                    self.log.info('Found existing asset by default.')
-            else:
+                assert asset, msg
+                self.log.info('Found existing asset by default.')
+            elif len(assets) > 1:
                 asset_name = ftrack_data['Task']['type']
                 for a in assets:
-                    msg += "\n\n%s" % a
+                    msg += " Multiple assets on shot: \n\n%s" % a
                     if asset_name.lower() == a.getName().lower():
                         asset = a
-            # TODO: fix singel asset auto selection
-            assert asset, msg
+                    create_asset = False
+                assert asset, msg
+                self.log.info('Found existing asset by default.')
+            else:
+                self.log.info('No asset found, new one will be created.')
 
         # adding asset to ftrack data
         if asset:
