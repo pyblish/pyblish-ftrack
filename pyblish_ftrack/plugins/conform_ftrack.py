@@ -1,10 +1,10 @@
 import pyblish.api
-
 import ftrack
 
 
 @pyblish.api.log
 class ConformFtrack(pyblish.api.Conformer):
+
     """ Creating Componenets in Ftrack.
     """
 
@@ -24,10 +24,9 @@ class ConformFtrack(pyblish.api.Conformer):
                            Skipping this instance')
             return
 
-        ftrack_data = instance.context.data('ftrackData')
-
+        asset_version = instance.data('ftrackAssetVersion')
         # creating components
-        version = ftrack.AssetVersion(ftrack_data['AssetVersion']['id'])
+        version = ftrack.AssetVersion(asset_version['id'])
         components = instance.data('ftrackComponents')
         for component_name in instance.data('ftrackComponents'):
 

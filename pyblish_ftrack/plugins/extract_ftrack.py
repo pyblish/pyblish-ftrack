@@ -1,19 +1,19 @@
 import pyblish.api
-
 import ftrack
 
 
 @pyblish.api.log
 class ExtractFtrack(pyblish.api.Extractor):
+
     """ Creating any Asset or AssetVersion in Ftrack.
     """
 
     label = 'Ftrack'
 
-    def process(self, instance):
+    def process(self, instance, context):
 
         # skipping instance if ftrackData isn't present
-        if not instance.context.has_data('ftrackData'):
+        if not context.has_data('ftrackData'):
             self.log.info('No ftrackData present. Skipping this instance')
             return
 
@@ -22,21 +22,21 @@ class ExtractFtrack(pyblish.api.Extractor):
             self.log.info('No ftrackComponents found. Skipping this instance')
             return
 
-        ftrack_data = instance.context.data('ftrackData').copy()
+        ftrack_data = context.data('ftrackData').copy()
         task = ftrack.Task(ftrack_data['Task']['id'])
         parent = task.getParent()
-
+        asset_data = None
         # creating asset
-        if instance.context.data('ftrackAssetCreate'):
+        if instance.data('ftrackAssetCreate'):
             asset = None
 
             # creating asset from ftrackAssetName
-            if instance.context.has_data('ftrackAssetName'):
+            if instance.has_data('ftrackAssetName'):
 
-                asset_name = instance.context.data('ftrackAssetName')
+                asset_name = instance.data('ftrackAssetName')
 
-                if instance.context.has_data('ftrackAssetType'):
-                    asset_type = instance.context.data('ftrackAssetType')
+                if instance.has_data('ftrackAssetType'):
+                    asset_type = instance.data('ftrackAssetType')
                 else:
                     asset_type = ftrack_data['Task']['code']
 
@@ -57,29 +57,42 @@ class ExtractFtrack(pyblish.api.Extractor):
                 self.log.info(msg)
 
             # adding asset to ftrack data
-            ftrack_data['Asset'] = {'id': asset.getId(),
-                                    'name': asset.getName()}
+            asset_data = {'id': asset.getId(),
+                          'name': asset.getName()}
+
+        if not asset_data:
+            asset_data = instance.data('ftrackAsset')
 
         # creating version
         version = None
-        if instance.context.data('ftrackAssetVersionCreate'):
-            asset = ftrack.Asset(ftrack_data['Asset']['id'])
+        if instance.data('ftrackAssetVersionCreate'):
+            asset = ftrack.Asset(asset_data['id'])
             taskid = ftrack_data['Task']['id']
-            version_number = int(instance.context.data('version'))
+            version_number = int(context.data('version'))
 
-            version = asset.createVersion(comment='', taskid=taskid)
-            version.set('version', value=version_number)
-            ftrack_data['AssetVersion'] = {'id': version.getId(),
-                                           'number': version_number}
+            try:
+                version = asset.createVersion(comment='', taskid=taskid)
+                version.set('version', value=version_number)
+            except:
+                version = self.GetVersionByNumber(asset, version_number)
+
+            asset_version = {'id': version.getId(), 'number': version_number}
+            instance.set_data('ftrackAssetVersion', value=asset_version)
             version.publish()
 
             self.log.info('Creating new asset version by %s.' % version_number)
         else:
             # using existing version
-            version = ftrack.AssetVersion(ftrack_data['AssetVersion']['id'])
+            asset_version = instance.data('ftrackAssetVersion')
+            version = ftrack.AssetVersion(asset_version['id'])
 
-        # adding asset to ftrack data
-        ftrack_data['AssetVersion'] = {'id': version.getId()}
+        # adding asset version to ftrack data
+        instance.set_data('ftrackAssetVersion', value=asset_version)
 
-        # setting ftrackData
-        instance.context.set_data('ftrackData', value=ftrack_data)
+    def GetVersionByNumber(self, asset, number):
+        for version in asset.getVersions():
+            try:
+                if version.getVersion() == int(number):
+                    return version
+            except:
+                return None
