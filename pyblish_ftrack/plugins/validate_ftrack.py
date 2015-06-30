@@ -35,7 +35,6 @@ class ValidateFtrack(pyblish.api.Validator):
         else:
             asset_type = ftrack_data['Task']['code']
 
-        # TODO: Make sure we're looking for the correct asset type.
         assets = task.getAssets(assetTypes=[asset_type])
 
         if len(assets) == 0:
@@ -86,7 +85,6 @@ class ValidateFtrack(pyblish.api.Validator):
         # if we are creating a new asset,
         # then we don't need to validate the rest
         if create_asset:
-            context.set_data('ftrackData', value=ftrack_data)
             return
 
         # checking version
@@ -120,7 +118,6 @@ class ValidateFtrack(pyblish.api.Validator):
         # if we are creating a new asset version,
         # then we don't need to validate the rest
         if create_version:
-            context.set_data('ftrackData', value=ftrack_data)
             return
 
         # checking components
@@ -143,6 +140,3 @@ class ValidateFtrack(pyblish.api.Validator):
                                delete it in the webUI first'
                         assert online_c.getName() not in (
                             'ftrackreview-mp4', 'ftrackreview-webm'), msg
-
-        # setting ftrackData
-        context.set_data('ftrackData', value=ftrack_data)
