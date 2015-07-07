@@ -66,6 +66,8 @@ class ExtractFtrack(pyblish.api.Extractor):
         if not asset_data:
             asset_data = instance.data('ftrackAsset')
 
+        instance.set_data('ftrackAsset', value=asset_data)
+
         # creating version
         version = None
         if instance.data('ftrackAssetVersionCreate') or create_version:
