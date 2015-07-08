@@ -40,7 +40,7 @@ context.set_data('ftrackAssetName', value='myAsset')
 context.set_data('version', value=2)
 ```
 
-**Publish from Ftrack **
+**Publish from Ftrack**
 
 Environment variables to set before launching ftrack-connect.
 
