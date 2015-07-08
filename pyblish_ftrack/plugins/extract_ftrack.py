@@ -26,6 +26,8 @@ class ExtractFtrack(pyblish.api.Extractor):
         task = ftrack.Task(ftrack_data['Task']['id'])
         parent = task.getParent()
         asset_data = None
+        create_version = False
+
         # creating asset
         if instance.data('ftrackAssetCreate'):
             asset = None
@@ -56,6 +58,7 @@ class ExtractFtrack(pyblish.api.Extractor):
                 msg = "Creating asset cause no asset is present."
                 self.log.info(msg)
 
+            create_version = True
             # adding asset to ftrack data
             asset_data = {'id': asset.getId(),
                           'name': asset.getName()}
@@ -63,24 +66,29 @@ class ExtractFtrack(pyblish.api.Extractor):
         if not asset_data:
             asset_data = instance.data('ftrackAsset')
 
+        instance.set_data('ftrackAsset', value=asset_data)
+
         # creating version
         version = None
-        if instance.data('ftrackAssetVersionCreate'):
+        if instance.data('ftrackAssetVersionCreate') or create_version:
             asset = ftrack.Asset(asset_data['id'])
             taskid = ftrack_data['Task']['id']
             version_number = int(context.data('version'))
 
-            try:
+            version = self.GetVersionByNumber(asset, version_number)
+
+            if not version:
                 version = asset.createVersion(comment='', taskid=taskid)
                 version.set('version', value=version_number)
-            except:
-                version = self.GetVersionByNumber(asset, version_number)
+                msg = 'Creating new asset version by %s.' % version_number
+                self.log.info(msg)
+            else:
+                msg = 'Using existing asset version by %s.' % version_number
+                self.log.info(msg)
 
             asset_version = {'id': version.getId(), 'number': version_number}
             instance.set_data('ftrackAssetVersion', value=asset_version)
             version.publish()
-
-            self.log.info('Creating new asset version by %s.' % version_number)
         else:
             # using existing version
             asset_version = instance.data('ftrackAssetVersion')

@@ -8,6 +8,7 @@ class ValidateFtrack(pyblish.api.Validator):
     """ Validate the existence of Asset, AssetVersion and Components.
     """
 
+    order = pyblish.api.Validator.order + 0.1
     optional = True
     label = 'Ftrack'
 
@@ -38,7 +39,8 @@ class ValidateFtrack(pyblish.api.Validator):
         assets = task.getAssets(assetTypes=[asset_type])
 
         if len(assets) == 0:
-            assets = task.getAssets()
+            instance.set_data('ftrackAssetCreate', value=True)
+            return
 
         if instance.has_data('ftrackAssetName'):
 
