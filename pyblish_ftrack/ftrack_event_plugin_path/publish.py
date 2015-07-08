@@ -145,7 +145,7 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
             expression=['C:\\', 'Python*', 'python.exe'],
             label='Publish',
             applicationIdentifier='publish',
-            icon="https://avatars1.githubusercontent.com/u/8535536?v=3&s=200",
+            icon="https://raw.githubusercontent.com/pyblish/pyblish-ftrack/master/pyblish_ftrack/ftrack_event_plugin_path/icon.png",
             launchArguments=launchArguments
         )
 
