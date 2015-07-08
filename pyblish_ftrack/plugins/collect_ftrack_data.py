@@ -19,13 +19,18 @@ class CollectFtrackData(pyblish.api.Selector):
 
     def process(self, context):
 
-        decodedEventData = json.loads(
-            base64.b64decode(
-                os.environ.get('FTRACK_CONNECT_EVENT')
+        taskid = ''
+        try:
+            decodedEventData = json.loads(
+                base64.b64decode(
+                    os.environ.get('FTRACK_CONNECT_EVENT')
+                )
             )
-        )
 
-        taskid = decodedEventData.get('selection')[0]['entityId']
+            taskid = decodedEventData.get('selection')[0]['entityId']
+        except:
+            taskid = os.environ['FTRACK_TASKID']
+
         ftrack_data = self.get_data(taskid)
 
         # set ftrack data

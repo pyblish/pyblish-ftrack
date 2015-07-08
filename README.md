@@ -20,7 +20,7 @@ ftrackComponents = {
                     'sequence': {path: 'path/to/file.%04d.exr'},
                     'movie':    {path: 'path/to/file.mp4', reviewable = True},
                     }
-                    
+
 instance.set_data('ftrackComponents', value=ftrackComponents)
 ```
 
@@ -39,3 +39,14 @@ context.set_data('ftrackAssetName', value='myAsset')
 # Example code to set ftrackAssetName data
 context.set_data('version', value=2)
 ```
+
+**Publish from Ftrack**
+
+Environment variables to set before launching ftrack-connect.
+
+- Add ```pyblish-ftrack/ftrack_event_plugin_path``` to ```FTRACK_EVENT_PLUGIN_PATH```
+- Add ```pyblish-win/pythonpath``` to ```PYTHONPATH```
+
+Publish action will appear in the available actions. When launched it will ask for a folder. This will be the current working directory (cwd), for the session, which can be access in plugins through ```os.getcwd()```
+
+Currently only tasks have the Publish action.
