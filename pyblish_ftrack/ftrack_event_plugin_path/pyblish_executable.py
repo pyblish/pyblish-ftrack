@@ -1,10 +1,21 @@
 import os
+
 import pyblish_qml.app
 import pyblish_rpc.server
 import pyblish_rpc.client
+import ftrack
 
 
 def main(port=9080):
+    # setting Pyblish Window title
+    task = ftrack.Task(os.environ['FTRACK_TASKID'])
+    path = [task.getName()]
+    for p in task.getParents():
+        path.append(p.getName())
+
+    path = ' / '.join(list(reversed(path)))
+    pyblish_qml.settings.WindowTitle = path
+
     app_path = pyblish_qml.app.APP_PATH
     app = pyblish_qml.app.Application(app_path)
     app.__debugging__ = True
