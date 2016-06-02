@@ -141,18 +141,31 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
         if path:
             launchArguments = [path]
 
-        return self._searchFilesystem(
+        icon = 'https://raw.githubusercontent.com/pyblish/pyblish-ftrack/'
+        icon += 'master/pyblish_ftrack/ftrack_event_plugin_path/icon.png'
+
+        application = self._searchFilesystem(
             expression=['C:\\', 'Python*', 'python.exe'],
             label='Publish',
             applicationIdentifier='publish',
-            icon="https://raw.githubusercontent.com/pyblish/pyblish-ftrack/master/pyblish_ftrack/ftrack_event_plugin_path/icon.png",
+            icon=icon,
             launchArguments=launchArguments
         )
+
+        for path in os.environ['PATH'].split(os.pathsep):
+            if 'python' in path.lower():
+                path = os.path.join(path, 'python.exe')
+
+                application = [{'label': 'Publish', 'identifier': 'publish',
+                'launchArguments': launchArguments, 'path': path, 'icon': icon}]
+
+        self.logger.info('Discovered application: %s' % application)
+
+        return application
 
 
 def register(registry, **kw):
     '''Register action. Called when used as an event plugin.'''
-    logging.basicConfig(level=logging.INFO)
     action = Publish()
     action.register()
 
