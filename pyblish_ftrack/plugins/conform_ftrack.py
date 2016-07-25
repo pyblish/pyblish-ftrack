@@ -36,11 +36,19 @@ class ConformFtrack(pyblish.api.Conformer):
             except:
                 return
 
+            component = None
             try:
-                version.createComponent(name=component_name, path=path)
+                component = version.createComponent(name=component_name,
+                                                    path=path)
                 self.log.info('Creating "%s" component.' % component_name)
             except:
-                pass
+                component = version.getComponent(name=component_name)
+                msg = "Component \"%s\" exists," % component_name
+                msg += " nothing was changed."
+                self.log.info(msg)
+
+            cid = component.getId()
+            instance.data["ftrackComponents"][component_name]["id"] = cid
 
             # make reviewable
             if 'reviewable' in components[component_name]:
