@@ -19,6 +19,13 @@ class CollectFtrackData(pyblish.api.Selector):
 
     def process(self, context):
 
+        # accounting for preexiting data
+        if "ftrackData" in context.data:
+            data = context.data["ftrackData"]
+            self.log.info('Found ftrack data: \n\n%s' % data)
+            return
+
+        # getting task id
         taskid = ''
         try:
             decodedEventData = json.loads(
