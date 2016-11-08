@@ -50,3 +50,12 @@ Environment variables to set before launching ftrack-connect.
 Publish action will appear in the available actions. When launched it will ask for a folder. This will be the current working directory (cwd), for the session, which can be access in plugins through ```os.getcwd()```
 
 Currently only tasks have the Publish action.
+
+**Debug Messages**
+
+By default Ftrack outputs a lot of debug messages. Still can be disabled with:
+
+```python
+import logging
+logging.getLogger("ftrack_api").setLevel(logging.WARNING)
+```
