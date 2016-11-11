@@ -57,5 +57,5 @@ By default Ftrack outputs a lot of debug messages. Still can be disabled with:
 
 ```python
 import logging
-logging.getLogger("ftrack_api").setLevel(logging.WARNING)
+logging.getLogger("ftrack_api").setLevel(logging.INFO)
 ```
