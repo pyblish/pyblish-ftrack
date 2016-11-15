@@ -16,6 +16,7 @@ To succesfully publish an instance to ftrack using this extension you need to ap
   - **Optional keys**
     - *reviewable* (bool): Tells extension whether you want the component to be uploaded to ftrack servers and made available for web-review.
     - *location* (ftrack.Location): If you set this data member on a component, the component will be added to that location when creating the component. By default all components will be added to "ftrack.unmanaged" location.
+    - *overwrite* (bool): You can overwrite the data and the component by adding this data member. *NOTE: THIS WILL POTENTIALLY RESULT IN DATA LOSS. USE WITH CAUTION.*
 
 ```python
 location = ftrack.Location("custom_location")
