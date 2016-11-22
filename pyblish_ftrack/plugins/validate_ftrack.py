@@ -136,7 +136,8 @@ class ValidateFtrack(pyblish.api.Validator):
                     # warning about existing components
                     msg = 'Component "%s" already exists. ' % local_c
                     msg += 'To replace it delete it in the browser first.'
-                    self.log.warning(msg)
+                    if not ftrack_components[local_c].get("overwrite", False):
+                        self.log.warning(msg)
 
                     # validating review components
                     if 'reviewable' in ftrack_components[local_c]:
