@@ -44,8 +44,8 @@ class IntegrateFtrack(pyblish.api.InstancePlugin):
             if not path:
                 continue
 
-            # Assuming "ftrack.unmanaged" for location unless others specified.
-            location = ftrack.Location("ftrack.unmanaged")
+            # Assuming default picked location unless others specified.
+            location = ftrack.pickLocation()
             if "location" in components[component_name]:
                 location = components[component_name]["location"]
 
@@ -53,26 +53,25 @@ class IntegrateFtrack(pyblish.api.InstancePlugin):
             component = None
             if component_name in existing_component_names:
                 component = version.getComponent(name=component_name)
-                msg = "Found existing \"%s\" component." % component_name
-                self.log.info(msg)
+                msg = "Found existing \"{0}\" component."
+                self.log.info(msg.format(component_name))
 
             # To overwrite we have to delete the existing component and
             # create a new one. This is to ensure the data gets to the
             # location correctly.
             if "overwrite" in components[component_name] and component:
-                msg = "Removing component in location: "
-                msg += "\"%s\"." % location.getName()
-                self.log.info(msg)
+                msg = "Removing component in location: \"{0}\"."
+                self.log.info(msg.format(location.getName()))
                 location.removeComponent(component)
 
-                self.log.info("Deleting \"%s\" component." % component_name)
+                msg = "Deleting \"{0}\" component."
+                self.log.info(msg.format(component_name))
                 component.delete()
                 component = None
 
             if not component:
-                msg = "Creating \"%s\" component, " % component_name
-                msg += " with data path: \"%s\"." % path
-                self.log.info(msg)
+                msg = "Creating \"{0}\" component, with data path: \"{1}\"."
+                self.log.info(msg.format(component_name, path))
                 component = version.createComponent(name=component_name,
                                                     path=path,
                                                     location=location)
