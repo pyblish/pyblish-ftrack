@@ -12,14 +12,18 @@ class ExtractFtrack(pyblish.api.Extractor):
 
     def process(self, instance, context):
 
-        # skipping instance if ftrackData isn't present
-        if not context.has_data('ftrackData'):
-            self.log.info('No ftrackData present. Skipping this instance')
+        # Skipping instance if ftrackData isn"t present.
+        if not instance.context.has_data("ftrackData"):
+            msg = "No ftrackData present. "
+            msg += "Skipping this instance: \"%s\"" % instance
+            self.log.info(msg)
             return
 
-        # skipping instance if ftrackComponents isn't present
-        if not instance.has_data('ftrackComponents'):
-            self.log.info('No ftrackComponents found. Skipping this instance')
+        # Skipping instance if ftrackComponents isn"t present.
+        if not instance.has_data("ftrackComponents"):
+            msg = "No ftrackComponents present. "
+            msg += "Skipping this instance: \"%s\"" % instance
+            self.log.info(msg)
             return
 
         ftrack_data = context.data('ftrackData').copy()
