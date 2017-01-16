@@ -44,7 +44,7 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
         task = instance.context.data["ftrackTask"]
 
         # Iterate over components and publish
-        for data in instance.data["ftrackComponentsList"]:
+        for data in instance.data.get("ftrackComponentsList", []):
 
             # AssetType
             # Get existing entity.
