@@ -86,6 +86,12 @@ instance.data["ftrackComponentsList"] = [
 ]
 ```
 
+After a successfull publish of a component, the component will be added to the data:
+```python
+for data in instance.data["ftrackComponentsList"]:
+    print data["component"]
+```
+
 ### Old API
 
 To succesfully publish an instance to ftrack using this extension you need to append a few data members to the instance you want to publish.

@@ -134,11 +134,12 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
 
             # Create new component if none exists.
             if not component_entity:
-                assetversion_entity.create_component(
+                component = assetversion_entity.create_component(
                     data["component_path"],
                     data=component_data,
                     location=location
                 )
+                data["component"] = component
                 msg = "Created new Component with path: {0}, data: {1}, "
                 msg += "location: {2}"
                 self.log.info(
@@ -151,6 +152,7 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
 
             # Inform user about no changes to the database.
             if component_entity and not component_overwrite:
+                data["component"] = component_entity
                 self.log.info(
                     "Found existing component, and no request to overwrite. "
                     "Nothing has been changed."
