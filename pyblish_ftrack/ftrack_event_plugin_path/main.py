@@ -3,7 +3,7 @@ import contextlib
 import subprocess
 
 from vendor.Qt import QtWidgets
-import riffle.browser
+from vendor.riffle import browser
 
 
 @contextlib.contextmanager
@@ -24,17 +24,17 @@ if __name__ == "__main__":
 
     with application():
 
-        browser = riffle.browser.FilesystemBrowser()
+        file_browser = browser.FilesystemBrowser()
 
         # If a path is passed, we'll set this as the current location.
         path = None
         if len(sys.argv) > 1:
             path = sys.argv[1]
-            browser.setLocation(sys.argv[1])
+            file_browser.setLocation(sys.argv[1])
 
         # Get path from browser.
-        if browser.exec_():
-            selected = browser.selected()
+        if file_browser.exec_():
+            selected = file_browser.selected()
             if selected:
                 path = selected[0]
 
