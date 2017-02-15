@@ -127,7 +127,11 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
 
             # Delete existing component if requested.
             if component_entity and component_overwrite:
-                location.remove_component(component_entity)
+
+                # Remove from location if any exists.
+                if component_entity["component_locations"][:]:
+                    location.remove_component(component_entity)
+
                 session.delete(component_entity)
                 self.log.info("Deleted existing component.")
                 component_entity = None
