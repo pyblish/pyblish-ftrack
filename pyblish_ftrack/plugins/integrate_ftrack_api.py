@@ -125,16 +125,23 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
             component_overwrite = data.get("component_overwrite", False)
             location = data.get("component_location", session.pick_location())
 
-            # Delete existing component if requested.
+            # Overwrite existing component data if requested.
             if component_entity and component_overwrite:
 
-                # Remove from location if any exists.
-                if component_entity["component_locations"][:]:
-                    location.remove_component(component_entity)
+                origin_location = session.query(
+                    "Location where name is \"ftrack.origin\""
+                ).one()
+                origin_location.add_component(
+                    component_entity, data["component_path"]
+                )
 
-                session.delete(component_entity)
-                self.log.info("Deleted existing component.")
-                component_entity = None
+                for loc in component_entity["component_locations"]:
+                    if location["id"] == loc["location_id"]:
+                        location.remove_component(component_entity)
+
+                location.add_component(component_entity, origin_location)
+
+                self.log.info("Overwriting existing component data.")
 
             # Create new component if none exists.
             if not component_entity:
