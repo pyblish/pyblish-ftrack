@@ -1,4 +1,7 @@
+import os
+
 import pyblish.api
+import clique
 
 
 class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
@@ -131,17 +134,77 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
                 origin_location = session.query(
                     "Location where name is \"ftrack.origin\""
                 ).one()
-                origin_location.add_component(
-                    component_entity, data["component_path"]
+
+                # Removing existing members from location
+                components = list(component_entity.get("members", []))
+                components += [component_entity]
+                for component in components:
+                    for loc in component["component_locations"]:
+                        if location["id"] == loc["location_id"]:
+                            location.remove_component(
+                                component, recursive=False
+                            )
+
+                # Deleting existing members on component entity
+                for member in component_entity.get("members", []):
+                    session.delete(member)
+                    del(member)
+
+                session.commit()
+
+                # Reset members in memory
+                if "members" in component_entity.keys():
+                    component_entity["members"] = []
+
+                # Add components to origin location
+                try:
+                    collection = clique.parse(data["component_path"])
+                except ValueError:
+                    # Assume its a single file
+                    origin_location.add_component(
+                        component_entity, data["component_path"]
+                    )
+                else:
+                    # Create member components for sequence.
+                    for member_path in collection:
+
+                        size = 0
+                        try:
+                            size = os.path.getsize(member_path)
+                        except OSError:
+                            pass
+
+                        name = collection.match(member_path).group("index")
+
+                        member_data = {
+                            "name": name,
+                            "container": component_entity,
+                            "size": size,
+                            "file_type": os.path.splitext(member_path)[-1]
+                        }
+
+                        component = session.create(
+                            "FileComponent", member_data
+                        )
+                        origin_location.add_component(
+                            component, member_path, recursive=False
+                        )
+                        component_entity["members"].append(component)
+
+                # Add components to location.
+                location.add_component(
+                    component_entity, origin_location, recursive=True
                 )
 
-                for loc in component_entity["component_locations"]:
-                    if location["id"] == loc["location_id"]:
-                        location.remove_component(component_entity)
-
-                location.add_component(component_entity, origin_location)
-
-                self.log.info("Overwriting existing component data.")
+                msg = "Overwriting Component with path: {0}, data: {1}, "
+                msg += "location: {2}"
+                self.log.info(
+                    msg.format(
+                        data["component_path"],
+                        component_data,
+                        location
+                    )
+                )
 
             # Create new component if none exists.
             if not component_entity:
