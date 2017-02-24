@@ -196,6 +196,7 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
                     component_entity, origin_location, recursive=True
                 )
 
+                data["component"] = component
                 msg = "Overwriting Component with path: {0}, data: {1}, "
                 msg += "location: {2}"
                 self.log.info(
