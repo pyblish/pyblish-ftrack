@@ -134,18 +134,31 @@ context.data["ftrackAssetName"] = "myAsset"
 context.data["version"] = 2
 ```
 
-**Publish from Ftrack**
+### Ftrack hook
 
-Environment variables to set before launching ftrack-connect.
+The Ftrack hook allows you to run Pyblish directly from your browser with actions. This allows you to publish any file without opening an application.
 
-- Add ```pyblish-ftrack/ftrack_event_plugin_path``` to ```FTRACK_EVENT_PLUGIN_PATH```
-- Add ```pyblish-win/pythonpath``` to ```PYTHONPATH```
+**Dependencies**
 
-Publish action will appear in the available actions. When launched it will ask for a folder. This will be the current working directory (cwd), for the session, which can be access in plugins through ```os.getcwd()```
+The hook takes advantage of [pyblish-standalone](https://github.com/pyblish/pyblish-standalone), so the ```pyblish-standalone``` module needs to be available to Python.
 
-Currently only tasks have the Publish action.
+**Setup**
 
-**Debug Messages**
+In order for ```ftrack-connect``` to find the ```pyblish-ftrack``` hook, you will need to setup your environment.
+
+- Add ```pyblish-ftrack/pyblish_ftrack``` to ```FTRACK_CONNECT_PLUGIN_PATH```
+
+**Usage**
+
+ Currently the Pyblish action is only available for tasks.
+
+ After you have launched the Pyblish action, you will be presented with a file browser where you browse to a specific folder to publish from. The selected folder will be available in Pyblish via the context;
+ ```python
+ print context.data["currentFile"]
+ ```
+If you want to specify the folder th browser begins on, you can add the directory in the same way that other Ftrack actions handle this; http://ftrack-connect.rtd.ftrack.com/en/0.1.21/developing/hooks/application_launch.html#ftrack-connect-application-launch
+
+### Debug Messages
 
 By default Ftrack outputs a lot of debug messages. Still can be disabled with:
 
