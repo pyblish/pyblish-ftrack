@@ -1,6 +1,7 @@
 import sys
 import contextlib
 import subprocess
+import argparse
 
 from vendor.Qt import QtWidgets
 from vendor.riffle import browser
@@ -22,21 +23,40 @@ def application():
 
 if __name__ == "__main__":
 
+    # Setup arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--path",
+        action="store",
+        default="",
+        dest="path"
+    )
+    parser.add_argument(
+        "--browser",
+        action="store_true",
+        default=False,
+        dest="browser",
+    )
+    args = parser.parse_args()
+    results = vars(args)
+    print results
+    print sys.argv
     with application():
 
         file_browser = browser.FilesystemBrowser()
+        path = results["path"]
+        browser = results["browser"]
 
         # If a path is passed, we'll set this as the current location.
-        path = None
-        if len(sys.argv) > 1:
-            path = sys.argv[1]
-            file_browser.setLocation(sys.argv[1])
+        if path:
+            file_browser.setLocation(path)
 
         # Get path from browser.
-        if file_browser.exec_():
-            selected = file_browser.selected()
-            if selected:
-                path = selected[0]
+        if browser:
+            if file_browser.exec_():
+                selected = file_browser.selected()
+                if selected:
+                    path = selected[0]
 
         # Start pyblish is a path is available.
         if path:

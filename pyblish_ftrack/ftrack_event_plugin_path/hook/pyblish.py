@@ -143,7 +143,7 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
 
         python_path = self.check_executable("python")
         if python_path:
-            applications.append(
+            applications.extend([
                 {
                     "description": None,
                     "icon": icon,
@@ -159,8 +159,25 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
                     "path": python_path,
                     "varient": "",
                     "version": ""
-                }
-            )
+                },
+                {
+                    "description": None,
+                    "icon": icon,
+                    "identifier": "pyblish_browser",
+                    "label": "Pyblish Browser",
+                    "launchArguments": [
+                        os.path.abspath(
+                            os.path.join(
+                                os.path.dirname(__file__), "..", "main.py"
+                            )
+                        ),
+                        "--browser"
+                    ],
+                    "path": python_path,
+                    "varient": "",
+                    "version": ""
+                },
+            ])
 
         self.logger.debug(
             "Discovered applications:\n{0}".format(
