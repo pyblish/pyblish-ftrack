@@ -39,8 +39,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     results = vars(args)
-    print results
-    print sys.argv
+
     with application():
 
         file_browser = browser.FilesystemBrowser()
