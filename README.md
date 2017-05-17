@@ -138,25 +138,41 @@ context.data["version"] = 2
 
 The Ftrack hook allows you to run Pyblish directly from your browser with actions. This allows you to publish any file without opening an application.
 
-**Dependencies**
+#### Dependencies
 
 The hook takes advantage of [pyblish-standalone](https://github.com/pyblish/pyblish-standalone), so the ```pyblish-standalone``` module needs to be available to Python.
 
-**Setup**
+Currently it only support the [pyblish-lite](https://github.com/pyblish/pyblish-lite) UI.
+
+#### Setup
 
 In order for ```ftrack-connect``` to find the ```pyblish-ftrack``` hook, you will need to setup your environment.
 
 - Add ```pyblish-ftrack/pyblish_ftrack``` to ```FTRACK_CONNECT_PLUGIN_PATH```
 
-**Usage**
+Also make sure both pyblish-standalone and pyblish-lite is available to import.
 
- Currently the Pyblish action is only available for tasks.
+#### Usage
 
- After you have launched the Pyblish action, you will be presented with a file browser where you browse to a specific folder to publish from. The selected folder will be available in Pyblish via the context;
+ Currently the Pyblish action is only available for tasks. You have two actions to choose from: ```Pyblish Browser``` and ```Pyblish```.
+
+ *Pyblish Browser*
+
+ After you have launched the ```Pyblish Browser``` action, you will be presented with a file browser where you browse to a specific folder to publish from. The selected folder will be available in Pyblish via the context;
+
  ```python
  print context.data["currentFile"]
  ```
-If you want to specify the folder th browser begins on, you can add the directory in the same way that other Ftrack actions handle this; http://ftrack-connect.rtd.ftrack.com/en/0.1.21/developing/hooks/application_launch.html#ftrack-connect-application-launch
+
+If you want to specify the folder the browser begins on, you can add the directory in the same way that other Ftrack actions handle this; http://ftrack-connect.rtd.ftrack.com/en/0.1.21/developing/hooks/application_launch.html#ftrack-connect-application-launch
+
+Append the ```--path``` argument to the launch command with you chosen directory.
+
+Once you have chosen you directory, pyblish-lite UI will be shown.
+
+*Pyblish*
+
+This is the same action as ```Pyblish Browser```, but without the file browser shown.
 
 ### Debug Messages
 
