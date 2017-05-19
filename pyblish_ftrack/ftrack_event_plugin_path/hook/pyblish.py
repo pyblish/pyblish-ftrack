@@ -109,7 +109,7 @@ class PyblishAction(object):
         }
 
     def launch(self, event):
-        """Callback method for Houdini action."""
+        """Callback method for Pyblish action."""
         applicationIdentifier = (
             event["data"]["applicationIdentifier"]
         )
@@ -143,24 +143,41 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
 
         python_path = self.check_executable("python")
         if python_path:
-            applications.append(
+            applications.extend([
                 {
                     "description": None,
                     "icon": icon,
                     "identifier": "pyblish",
                     "label": "Pyblish",
-                    "launchArguments": [os.path.abspath(
-                        os.path.join(
-                            os.path.dirname(__file__),
-                            "..",
-                            "main.py"
+                    "launchArguments": [
+                        os.path.abspath(
+                            os.path.join(
+                                os.path.dirname(__file__), "..", "main.py"
+                            )
                         )
-                    )],
+                    ],
                     "path": python_path,
                     "varient": "",
                     "version": ""
-                }
-            )
+                },
+                {
+                    "description": None,
+                    "icon": icon,
+                    "identifier": "pyblish_browser",
+                    "label": "Pyblish Browser",
+                    "launchArguments": [
+                        os.path.abspath(
+                            os.path.join(
+                                os.path.dirname(__file__), "..", "main.py"
+                            )
+                        ),
+                        "--browser"
+                    ],
+                    "path": python_path,
+                    "varient": "",
+                    "version": ""
+                },
+            ])
 
         self.logger.debug(
             "Discovered applications:\n{0}".format(
