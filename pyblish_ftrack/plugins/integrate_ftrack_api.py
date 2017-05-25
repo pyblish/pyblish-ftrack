@@ -162,9 +162,8 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
                 except ValueError:
                     # Assume its a single file
                     # Changing file type
-                    component_entity["file_type"] = os.path.splitext(
-                        data["component_path"]
-                    )[-1]
+                    name, ext = os.path.splitext(data["component_path"])
+                    component_entity["file_type"] = ext
 
                     origin_location.add_component(
                         component_entity, data["component_path"]
