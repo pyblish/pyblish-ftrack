@@ -161,10 +161,17 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
                     collection = clique.parse(data["component_path"])
                 except ValueError:
                     # Assume its a single file
+                    # Changing file type
+                    name, ext = os.path.splitext(data["component_path"])
+                    component_entity["file_type"] = ext
+
                     origin_location.add_component(
                         component_entity, data["component_path"]
                     )
                 else:
+                    # Changing file type
+                    component_entity["file_type"] = collection.format("{tail}")
+
                     # Create member components for sequence.
                     for member_path in collection:
 
