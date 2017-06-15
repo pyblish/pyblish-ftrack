@@ -2,7 +2,7 @@ import os
 import json
 import base64
 
-import ftrack_api
+from ftrack_connect.session import get_shared_session
 import pyblish.api
 
 
@@ -15,7 +15,7 @@ class PyblishFtrackCollectFtrackApi(pyblish.api.ContextPlugin):
     def process(self, context):
 
         # Collect session
-        session = ftrack_api.Session()
+        session = get_shared_session()
         context.data["ftrackSession"] = session
 
         # Collect task
