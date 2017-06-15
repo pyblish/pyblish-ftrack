@@ -46,6 +46,9 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
         session = instance.context.data["ftrackSession"]
         task = instance.context.data["ftrackTask"]
 
+        info_msg = "Created new {entity_type} with data: {data}"
+        info_msg += ", metadata: {metadata}."
+
         # Iterate over components and publish
         for data in instance.data.get("ftrackComponentsList", []):
 
@@ -78,12 +81,25 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
                 self.query("Asset", asset_data)
             ).first()
 
+            # Extracting metadata, and adding after entity creation. This is
+            # due to a ftrack_api bug where you can't add metadata on creation.
+            asset_metadata = asset_data.pop("metadata", {})
+
             # Create a new entity if none exits.
             if not asset_entity:
                 asset_entity = session.create("Asset", asset_data)
                 self.log.info(
-                    "Created new Asset with data: {0}".format(asset_data)
+                    info_msg.format(
+                        entity_type="Asset",
+                        data=asset_data,
+                        metadata=asset_metadata
+                    )
                 )
+
+            # Adding metadata
+            existing_asset_metadata = asset_entity["metadata"]
+            existing_asset_metadata.update(asset_metadata)
+            asset_entity["metadata"] = existing_asset_metadata
 
             # AssetVersion
             # Get existing entity.
@@ -98,16 +114,27 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
                 self.query("AssetVersion", assetversion_data)
             ).first()
 
+            # Extracting metadata, and adding after entity creation. This is
+            # due to a ftrack_api bug where you can't add metadata on creation.
+            assetversion_metadata = assetversion_data.pop("metadata", {})
+
             # Create a new entity if none exits.
             if not assetversion_entity:
                 assetversion_entity = session.create(
                     "AssetVersion", assetversion_data
                 )
                 self.log.info(
-                    "Created new AssetVersion with data: {0}".format(
-                        assetversion_data
+                    info_msg.format(
+                        entity_type="AssetVersion",
+                        data=assetversion_data,
+                        metadata=assetversion_metadata
                     )
                 )
+
+            # Adding metadata
+            existing_assetversion_metadata = assetversion_entity["metadata"]
+            existing_assetversion_metadata.update(assetversion_metadata)
+            assetversion_entity["metadata"] = existing_assetversion_metadata
 
             # Have to commit the version and asset, because location can't
             # determine the final location without.
@@ -214,23 +241,33 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
                     )
                 )
 
+            # Extracting metadata, and adding after entity creation. This is
+            # due to a ftrack_api bug where you can't add metadata on creation.
+            component_metadata = component_data.pop("metadata", {})
+
             # Create new component if none exists.
             if not component_entity:
-                component = assetversion_entity.create_component(
+                component_entity = assetversion_entity.create_component(
                     data["component_path"],
                     data=component_data,
                     location=location
                 )
-                data["component"] = component
-                msg = "Created new Component with path: {0}, data: {1}, "
-                msg += "location: {2}"
+                data["component"] = component_entity
+                msg = "Created new Component with path: {0}, data: {1}"
+                msg += ", metadata: {2}, location: {3}"
                 self.log.info(
                     msg.format(
                         data["component_path"],
                         component_data,
+                        component_metadata,
                         location
                     )
                 )
+
+            # Adding metadata
+            existing_component_metadata = component_entity["metadata"]
+            existing_component_metadata.update(component_metadata)
+            component_entity["metadata"] = existing_component_metadata
 
             # Inform user about no changes to the database.
             if component_entity and not component_overwrite:
