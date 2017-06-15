@@ -36,14 +36,15 @@ class CollectFtrackData(pyblish.api.Selector):
 
             taskid = decodedEventData.get('selection')[0]['entityId']
         except:
-            taskid = os.environ['FTRACK_TASKID']
+            taskid = os.environ.get('FTRACK_TASKID', '')
 
-        ftrack_data = self.get_data(taskid)
+        if taskid:
+            ftrack_data = self.get_data(taskid)
 
-        # set ftrack data
-        context.set_data('ftrackData', value=ftrack_data)
+            # set ftrack data
+            context.set_data('ftrackData', value=ftrack_data)
 
-        self.log.info('Found ftrack data: \n\n%s' % ftrack_data)
+            self.log.info('Found ftrack data: \n\n%s' % ftrack_data)
 
     def get_data(self, taskid):
 
