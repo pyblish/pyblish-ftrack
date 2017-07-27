@@ -246,6 +246,7 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
             component_metadata = component_data.pop("metadata", {})
 
             # Create new component if none exists.
+            new_component = False
             if not component_entity:
                 component_entity = assetversion_entity.create_component(
                     data["component_path"],
@@ -263,6 +264,7 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
                         location
                     )
                 )
+                new_component = True
 
             # Adding metadata
             existing_component_metadata = component_entity["metadata"]
@@ -270,7 +272,8 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
             component_entity["metadata"] = existing_component_metadata
 
             # Inform user about no changes to the database.
-            if component_entity and not component_overwrite:
+            if (component_entity and not component_overwrite and
+               not new_component):
                 data["component"] = component_entity
                 self.log.info(
                     "Found existing component, and no request to overwrite. "
