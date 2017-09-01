@@ -155,6 +155,8 @@ In order for ```ftrack-connect``` to find the ```pyblish-ftrack``` hook, you wil
 
 Also make sure both pyblish-base and the gui is available to import.
 
+By default pyblish-qml will be used for the GUI if available. You can change that by using the environment variable ```PYBLISH_GUI```.
+
 #### Usage
 
  Currently the Pyblish action is only available for tasks. You have two actions to choose from: ```Pyblish Browser``` and ```Pyblish```.
