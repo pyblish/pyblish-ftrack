@@ -140,9 +140,12 @@ The Ftrack hook allows you to run Pyblish directly from your browser with action
 
 #### Dependencies
 
-The hook takes advantage of [pyblish-standalone](https://github.com/pyblish/pyblish-standalone), so the ```pyblish-standalone``` module needs to be available to Python.
+The hook takes advantage of Pyblish CLI, so you'll need to have [pyblish-base](https://github.com/pyblish/pyblish-base) installed.
 
-Currently it only support the [pyblish-lite](https://github.com/pyblish/pyblish-lite) UI.
+You'll also need a gui for Pyblish. Here are two of the official Pyblish GUIs:
+
+- [pyblish-lite](https://github.com/pyblish/pyblish-lite)
+- [pyblish-qml](https://github.com/pyblish/pyblish-qml)
 
 #### Setup
 
@@ -150,7 +153,7 @@ In order for ```ftrack-connect``` to find the ```pyblish-ftrack``` hook, you wil
 
 - Add ```pyblish-ftrack/pyblish_ftrack``` to ```FTRACK_CONNECT_PLUGIN_PATH```
 
-Also make sure both pyblish-standalone and pyblish-lite is available to import.
+Also make sure both pyblish-base and the gui is available to import.
 
 #### Usage
 

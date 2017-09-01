@@ -1,3 +1,4 @@
+import os
 import sys
 import contextlib
 import subprocess
@@ -28,7 +29,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--path",
         action="store",
-        default="",
+        default=os.getcwd(),
         dest="path"
     )
     parser.add_argument(
@@ -42,32 +43,34 @@ if __name__ == "__main__":
 
     with application():
 
-        file_browser = browser.FilesystemBrowser()
         path = results["path"]
-        browser = results["browser"]
-
-        # If a path is passed, we'll set this as the current location.
-        if path:
-            file_browser.setLocation(path)
 
         # Get path from browser.
-        if browser:
+        if results["browser"]:
+            file_browser = browser.FilesystemBrowser(path)
+            file_browser.setLocation(path)
+
             if file_browser.exec_():
                 selected = file_browser.selected()
                 if selected:
                     path = selected[0]
 
-        # Start pyblish is a path is available.
-        if path:
-            subprocess.call([
-                "python",
+        # Add "ftrack" as host through environment variable.
+        os.environ["PYBLISH_HOSTS"] = "ftrack"
+
+        # Start pyblish gui. We can't set the current working directory because
+        # UNC paths does not work with cmd.exe, so we inject to the context
+        # instead.
+        subprocess.call(
+            [
+                sys.executable,
                 "-m",
-                "pyblish_standalone",
+                "pyblish",
+                "--data",
+                "currentFile",
                 path,
-                "--register-host",
-                "ftrack",
-                "--register-gui",
-                "pyblish_lite"
-            ])
+                "gui"
+            ]
+        )
 
         sys.exit()
