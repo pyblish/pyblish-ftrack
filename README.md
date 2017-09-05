@@ -92,6 +92,23 @@ for data in instance.data["ftrackComponentsList"]:
     print data["component"]
 ```
 
+#### Thumbnail
+
+You can set the thumbnail of the AssetVersion by adding a component and setting the ```thumbnail``` data member:
+
+```python
+{
+  "component_data": {
+    "name": "thumbnail"
+  },
+  "component_path": "path/to/thumbnail/image",
+  "component_location": session.query(
+    "Location where name is \"ftrack.server\""
+  ).one(),
+  "thumbnail": True
+}
+```
+
 ### Old API
 
 To succesfully publish an instance to ftrack using this extension you need to append a few data members to the instance you want to publish.
