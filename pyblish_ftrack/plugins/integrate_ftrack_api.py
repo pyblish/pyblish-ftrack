@@ -271,6 +271,10 @@ class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
             existing_component_metadata.update(component_metadata)
             component_entity["metadata"] = existing_component_metadata
 
+            # Setting assetversion thumbnail
+            if data.get("thumbnail", False):
+                assetversion_entity["thumbnail_id"] = component_entity["id"]
+
             # Inform user about no changes to the database.
             if (component_entity and not component_overwrite and
                not new_component):
