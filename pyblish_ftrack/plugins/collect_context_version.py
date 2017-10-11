@@ -1,9 +1,5 @@
 import os
-import sys
 import re
-
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-# import pyblish_ftrack_utils
 
 import pyblish.api
 
