@@ -5,7 +5,7 @@ import pyblish.api
 
 
 @pyblish.api.log
-class SelectContextVersion(pyblish.api.Selector):
+class CollectContextVersion(pyblish.api.Selector):
     """Finds version in the filename or passes the one found in the context
         Arguments:
         version (int, optional): version number of the publish
