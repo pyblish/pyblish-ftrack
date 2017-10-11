@@ -8,7 +8,7 @@ class IntegrateFtrackApi(pyblish.api.InstancePlugin):
     """ Commit components to server. """
 
     order = pyblish.api.IntegratorOrder
-    label = "Ftrack"
+    label = "Integrate Ftrack Api"
     families = ["ftrack"]
 
     def query(self, entitytype, data):

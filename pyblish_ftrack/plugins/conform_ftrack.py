@@ -6,7 +6,7 @@ class ConformFtrack(pyblish.api.InstancePlugin):
     """ Creating components in Ftrack. """
 
     order = pyblish.api.IntegratorOrder + 0.4
-    label = "Ftrack"
+    label = "Conform Ftrack"
 
     def process(self, instance):
 

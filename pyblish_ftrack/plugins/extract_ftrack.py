@@ -8,7 +8,7 @@ class ExtractFtrack(pyblish.api.Extractor):
     """ Creating any Asset or AssetVersion in Ftrack.
     """
 
-    label = 'Ftrack'
+    label = 'Extract Ftrack'
 
     def process(self, instance, context):
 
