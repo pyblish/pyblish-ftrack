@@ -6,7 +6,7 @@ import ftrack_api
 import pyblish.api
 
 
-class PyblishFtrackCollectFtrackApi(pyblish.api.ContextPlugin):
+class CollectFtrackApi(pyblish.api.ContextPlugin):
     """ Collects an ftrack session and the current task id. """
 
     order = pyblish.api.CollectorOrder

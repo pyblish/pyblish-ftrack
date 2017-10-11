@@ -4,7 +4,7 @@ import pyblish.api
 import clique
 
 
-class PyblishFtrackIntegrateFtrackApi(pyblish.api.InstancePlugin):
+class IntegrateFtrackApi(pyblish.api.InstancePlugin):
     """ Commit components to server. """
 
     order = pyblish.api.IntegratorOrder
