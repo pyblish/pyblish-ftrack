@@ -26,7 +26,7 @@ class CollectFtrackData(pyblish.api.Selector):
             return
 
         # getting task id
-        taskid = ''
+
         try:
             decodedEventData = json.loads(
                 base64.b64decode(

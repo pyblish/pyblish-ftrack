@@ -19,7 +19,7 @@ class PyblishFtrackCollectFtrackApi(pyblish.api.ContextPlugin):
         context.data["ftrackSession"] = session
 
         # Collect task
-        taskid = ""
+
         try:
             decodedEventData = json.loads(
                 base64.b64decode(
