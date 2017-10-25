@@ -19,17 +19,17 @@ class PyblishFtrackCollectFtrackApi(pyblish.api.ContextPlugin):
         context.data["ftrackSession"] = session
 
         # Collect task
-        taskid = os.environ.get("FTRACK_TASKID", "")
+        task_id = os.environ.get("FTRACK_TASKID", "")
 
         try:
-            decodedEventData = json.loads(
+            decoded_event_data = json.loads(
                 base64.b64decode(
                     os.environ.get("FTRACK_CONNECT_EVENT")
                 )
             )
 
-            taskid = decodedEventData.get("selection")[0]["entityId"]
+            task_id = decoded_event_data.get("selection")[0]["entityId"]
         except:
             pass
 
-        context.data["ftrackTask"] = session.get("Task", taskid)
+        context.data["ftrackTask"] = session.get("Task", task_id)
