@@ -10,7 +10,7 @@ class ValidateFtrack(pyblish.api.Validator):
 
     order = pyblish.api.Validator.order + 0.1
     optional = True
-    label = 'Ftrack'
+    label = 'Validate Ftrack'
 
     def process(self, instance, context):
 

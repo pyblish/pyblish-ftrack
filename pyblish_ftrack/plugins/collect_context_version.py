@@ -1,15 +1,11 @@
 import os
-import sys
 import re
-
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-# import pyblish_ftrack_utils
 
 import pyblish.api
 
 
 @pyblish.api.log
-class SelectContextVersion(pyblish.api.Selector):
+class CollectContextVersion(pyblish.api.Selector):
     """Finds version in the filename or passes the one found in the context
         Arguments:
         version (int, optional): version number of the publish
