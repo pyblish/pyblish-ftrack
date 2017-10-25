@@ -26,27 +26,28 @@ class CollectFtrackData(pyblish.api.Selector):
             return
 
         # getting task id
-        taskid = ''
+        task_id = os.environ.get('FTRACK_TASKID', '')
+
         try:
-            decodedEventData = json.loads(
+            decoded_event_data = json.loads(
                 base64.b64decode(
                     os.environ.get('FTRACK_CONNECT_EVENT')
                 )
             )
 
-            taskid = decodedEventData.get('selection')[0]['entityId']
+            task_id = decoded_event_data.get('selection')[0]['entityId']
         except:
-            taskid = os.environ.get('FTRACK_TASKID', '')
+            pass
 
-        if taskid:
-            ftrack_data = self.get_data(taskid)
+        if task_id:
+            ftrack_data = self.get_data(task_id)
 
             # set ftrack data
             context.set_data('ftrackData', value=ftrack_data)
 
             self.log.info('Found ftrack data: \n\n%s' % ftrack_data)
 
-    def get_data(self, taskid):
+    def get_data(self, task_id):
 
         task_codes = {
             'Animation': 'anim',
@@ -61,14 +62,14 @@ class CollectFtrackData(pyblish.api.Selector):
         }
 
         try:
-            task = ftrack.Task(id=taskid)
+            task = ftrack.Task(id=task_id)
         except ValueError:
             task = None
 
         parents = task.getParents()
         project = ftrack.Project(task.get('showid'))
-        taskType = task.getType().getName()
-        entityType = task.getObjectType()
+        task_type = task.getType().getName()
+        entity_type = task.getObjectType()
 
         ctx = {
             'Project': {
@@ -77,25 +78,25 @@ class CollectFtrackData(pyblish.api.Selector):
                 'id': task.get('showid'),
                 'root': project.getRoot(),
             },
-            entityType: {
-                'type': taskType,
+            entity_type: {
+                'type': task_type,
                 'name': task.getName(),
                 'id': task.getId(),
-                'code': task_codes.get(taskType, None)
+                'code': task_codes.get(task_type, None)
             }
         }
 
         for parent in parents:
             tempdic = {}
             if parent.get('entityType') == 'task' and parent.getObjectType():
-                objectType = parent.getObjectType()
+                object_type = parent.getObjectType()
                 tempdic['name'] = parent.getName()
                 tempdic['description'] = parent.getDescription()
                 tempdic['id'] = parent.getId()
-                if objectType == 'Asset Build':
+                if object_type == 'Asset Build':
                     tempdic['type'] = parent.getType().get('name')
-                    objectType = objectType.replace(' ', '_')
+                    object_type = object_type.replace(' ', '_')
 
-                ctx[objectType] = tempdic
+                ctx[object_type] = tempdic
 
         return ctx
