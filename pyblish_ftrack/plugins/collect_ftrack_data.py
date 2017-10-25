@@ -26,6 +26,7 @@ class CollectFtrackData(pyblish.api.Selector):
             return
 
         # getting task id
+        taskid = os.environ.get('FTRACK_TASKID', '')
 
         try:
             decodedEventData = json.loads(
@@ -36,7 +37,7 @@ class CollectFtrackData(pyblish.api.Selector):
 
             taskid = decodedEventData.get('selection')[0]['entityId']
         except:
-            taskid = os.environ.get('FTRACK_TASKID', '')
+            pass
 
         if taskid:
             ftrack_data = self.get_data(taskid)
