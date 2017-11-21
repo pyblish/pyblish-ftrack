@@ -157,7 +157,7 @@ The Ftrack hook allows you to run Pyblish directly from your browser with action
 
 #### Dependencies
 
-The hook takes advantage of Pyblish CLI, so you'll need to have [pyblish-base](https://github.com/pyblish/pyblish-base) installed.
+The hook takes advantage of Pyblish CLI, so you'll need to have [pyblish-base](https://github.com/pyblish/pyblish-base)(1.4.5+) installed.
 
 You'll also need a gui for Pyblish. Here are two of the official Pyblish GUIs:
 
